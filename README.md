@@ -9,10 +9,12 @@ A game of Heroes and Lackeys\
 ## Chosen technologies
 
 Python and the katagames SDK on the client-side,\
-PHP on the server-side.
+PHP on the server-side.\
+The PHP software uses composer for dependency management.
 
 *Python et le SDK katagames côté client,*\
-*PHP sur le côté serveur.*
+*PHP sur le côté serveur.*\
+*Le logiciel PHP utilise composer pour gérer les dépendances.*
 
 ## Type of game / Type de jeu
 
