@@ -1,24 +1,44 @@
 # Mythrandian Guard
 
-<center><a href="https://discord.gg/24DfrtvpXk"><img src="discord-logo.png" height="48"></a></center>
-
+<center>
+<a href="https://discord.gg/24DfrtvpXk"><img src="discord-logo.png" height="48"></a>
+</center>
 
 A game of Heroes and Lackeys\
 *Un jeu de Héros et de Laquais*
 
-## Chosen technologies
+
+## Deployment
+
+The software has been tested with PHP, version 7.1.33\
+and it uses composer for dependency management, Propel as ORM,\
+and a [datto/php-json-rpc](https://github.com/datto/php-json-rpc) component.
+
+To deploy the server software, you need to D/L composer into the `server/` folder:
+```
+$ wget http://getcomposer.org/composer.phar
+# Or if you haven't wget on your computer
+$ curl -s http://getcomposer.org/installer | php
+```
+then, install all project's dependencies by typing:
+```
+php composer.phar install
+```
+
+
+## Chosen tech stack (overview)
 
 Python and the katagames SDK on the client-side,\
 PHP on the server-side.\
-The PHP software uses composer for dependency management.
 
 *Python et le SDK katagames côté client,*\
 *PHP sur le côté serveur.*\
-*Le logiciel PHP utilise composer pour gérer les dépendances.*
+
 
 ## Type of game / Type de jeu
 
 Idle-game + "Deck building" game
+
 
 ## Gameplay overview / Aperçu du gameplay
 
