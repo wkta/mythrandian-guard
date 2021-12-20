@@ -12,7 +12,7 @@ class _Spritesheet(object):
     """
 
     def __init__(self, ressource_pygame_ratio11, scale=2):
-        self.sheet = ressource_pygame_ratio11  #.convert()
+        self.sheet = ressource_pygame_ratio11  # .convert()
         if scale != 1:
             self.sheet = pygame.transform.scale(
                 self.sheet, (self.sheet.get_width() * scale, self.sheet.get_height() * scale)
@@ -49,12 +49,15 @@ class _Spritesheet(object):
         return self.images_at(tups, colorkey)
 
 
+ENUM_FRAMES_ENTRY = 'seq'
+DELAY_ENTRY = 'delay'
+
 
 class AnimatedSprite(pygame.sprite.Sprite):
     def __init__(self, srcpath):
         super().__init__()
-        self.img_source = srcpath+'.png'
-        self.infospath = srcpath+'.json'
+        self.img_source = srcpath + '.png'
+        self.infospath = srcpath + '.json'
 
         self._twidth, self._theight = None, None
         self._ck_desc = None
@@ -62,6 +65,8 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
         self._data = None
         self._animations = dict()  # the default anim always has the name "idle"
+
+        self.rect = None
 
         # for one given animation
         self._curr_anim_name = None
@@ -71,28 +76,64 @@ class AnimatedSprite(pygame.sprite.Sprite):
         self.delay_per_frame = 100 / 1000  # 100ms by default
         self.stack_time = 0
 
-    def load_data(self):
+    def __getattr__(self, name):
+        print('warning! no preloading has been done on AnimatedSprite inst. ({})'.format(self.img_source))
+        if name == 'image':
+            self.preload()
+            return self.image
+
+    def preload(self):
+        fullsheet = pygame.image.load(self.img_source)
+        fs_width, fs_height = fullsheet.get_size()
+
         with open(self.infospath, 'r') as fptr:
             infos_obj = json.load(fptr)
             self._twidth, self._theight = infos_obj['tilesize']
             self._ck_desc = infos_obj['colorkey']
+            padding = int(infos_obj['padding'])
             self.total_nb_img = 12
 
-            # TODO la cest fait a la main, automatiser ca
+            # -- algorithm:
+            # 1) find how many lines & colums
+            # 2) put everything in a temp list
+            # 3) filter out empty frames (thx to the given padding value)
+            # step one
+            ncolumns, nlines = fs_width // self._twidth, fs_height // self._theight
+            # step two
             tmp = list()
-            tmp.extend(  # 1er ligne
-                _Spritesheet(pygame.image.load(self.img_source), 1).load_strip(
-                    (0, 0, self._twidth, self._theight), 6, pygame.color.Color(self._ck_desc))
-            )
-            tmp.extend(  # 2e
-                _Spritesheet(pygame.image.load(self.img_source), 1).load_strip(
-                    (0, self._theight, self._twidth, self._theight), 6, pygame.color.Color(self._ck_desc))
-            )
-            self._data = tmp
-            self.total_nb_img = len(self._data)
+            colork = pygame.color.Color(self._ck_desc)
+            for lrank in range(nlines):
+                tmp.extend(
+                    _Spritesheet(fullsheet, 1).load_strip(
+                        (0, lrank * self._theight, self._twidth, self._theight), ncolumns, colork
+                    )
+                )
+            # step three
+            if padding > 0:
+                self._data = tmp[:-padding]
+            else:
+                self._data = tmp
+            # done --
 
+            self.total_nb_img = len(self._data)
+            print('total_nb_img -- ', self.total_nb_img)
             self._load_anims(infos_obj['animations'])
             self.play('idle')
+
+    def _ensure_list(self, obj):
+        if isinstance(obj, str):
+            tmp = obj.split('-')
+            if len(tmp[1]) == 0:
+                a = int(tmp[0])
+                b = self.total_nb_img-1
+            else:
+                a = int(tmp[0])
+                b = int(tmp[1])
+
+            return list(range(a, b + 1))
+        else:
+            return obj
+
 
     def _load_anims(self, obj):
         """
@@ -109,23 +150,34 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
         for k, v in obj.items():
             tmp = list()
-            for idx in v['set']:
+            enum_frames = self._ensure_list(v[ENUM_FRAMES_ENTRY])
+            for idx in enum_frames:
 
                 if idx >= self.total_nb_img:
                     err_m = 'in animation "{}" given range is {} but, no corresp. data in the SpriteSheet!'.format(
-                        k, v['set']
+                        k, v[ENUM_FRAMES_ENTRY]
                     )
                     raise ValueError(err_m)
                 tmp.append(self._data[idx])
-            self._animations[k] = (tmp, v['delay'] / 1000)  # defined as millisec
+            print('anim {} , img count -- {}'.format(k, len(tmp)))
+            self._animations[k] = (tmp, v[DELAY_ENTRY] / 1000)  # defined as millisec
 
     def play(self, anim_name):
         self._curr_anim_name = anim_name
-        self.k = 0
         self._curr_img_list, self.delay_per_frame = self._animations[anim_name]
         self._curr_nb_frames = len(self._curr_img_list)
 
-    def update_anim(self, dt):
+        self.image = self._curr_img_list[0]
+        if self.rect is None:
+            self.rect = self.image.get_rect()
+
+        self.k = 0
+        self.stack_time = 0
+
+    def draw(self, screenref):
+        screenref.blit(self.image, self.rect.topleft)
+
+    def update(self, dt):
         self.stack_time += dt
 
         if self.stack_time > self.delay_per_frame:
