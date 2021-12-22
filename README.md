@@ -7,22 +7,50 @@
 A game of Heroes and Lackeys\
 *Un jeu de Héros et de Laquais*
 
+## Development: client-side
 
-## Deployment
 
-The software has been tested with PHP, version 7.1.33\
-and it uses composer for dependency management, Propel as ORM,\
-and a [datto/php-json-rpc](https://github.com/datto/php-json-rpc) component.
+## Development: server-side
 
-To deploy the server software, you need to D/L composer into the `server/` folder:
+(Proof-tested using Ubuntu 21.10, should work with any Linux system)
+
+First install software for running http servers:
+apache and mysql... Using a firewall is strongly recommanded.
+
+```
+$ sudo apt install apache2
+$ sudo apt install mysql-server  # or mariadb-server mariadb-client
+```
+remember you may need to open `public_html` on read, example:
+```
+a2enmod userdir
+chmod 755 /home/tom
+mkdir /home/tom/public_html ; chmod 755 /home/tom/public_html
+```
+
+More info.
+[in french](https://fr.wikibooks.org/wiki/Apache/UserDir)
+
+Once your server can be reached via `localhost/~usernamehere`,
+then you can install PHP (the game has been tested using v7.1.33)\
+On ubuntu you can use:
+
+```
+apt-get install php 
+# for old systems: install php7.4-common php7.4-mysql libapache2-mod-php7.4
+```
+
+Libraries used by the project are Propel as ORM,\
+plus a [datto/php-json-rpc](https://github.com/datto/php-json-rpc) component...
+To download composer and install libraries, change dir to `server/` then type:
+
+
 ```
 $ wget http://getcomposer.org/composer.phar
 # Or if you haven't wget on your computer
 $ curl -s http://getcomposer.org/installer | php
-```
-then, install all project's dependencies by typing:
-```
-php composer.phar install
+# then
+$ php composer.phar install
 ```
 
 
