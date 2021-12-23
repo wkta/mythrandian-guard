@@ -59,10 +59,12 @@ More info. about userdir module:
 
 Once your server can be reached via `localhost/~usernamehere`,
 then you can install PHP (the game has been tested using v7.1.33)\
-On ubuntu you can use:
+along with basic PHP modules.
+
+On ubuntu you can use the following command:
 
 ```
-apt install php libapache2-mod-php
+apt install php libapache2-mod-php php-mysql php-xml
 ```
 
 It is strongly recommended to use symlinks between your virtual host

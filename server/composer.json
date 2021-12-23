@@ -1,5 +1,13 @@
 {
-"require": {
-	"datto/json-rpc-simple": "^4.0"
+  "name":"gaudiatech/mythrandian",
+
+  "require": { 
+    "datto/json-rpc-simple": "^4.0",
+    "propel/propel": "~2.0@dev"
+  },
+
+  "autoload": {
+    "classmap": ["datab/"]
+  }
 }
-}
+
