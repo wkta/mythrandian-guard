@@ -3,14 +3,17 @@
 a game of Heroes and Lackeys
 un jeu de Héros et de Laquais
 
+project started by: wkta-tom (contact@kata.games )
++ authored by various users see the CONTRIBUTORS file
+started in Dec. 2021
+
+important notice:
+All project files (source-code) that ARE NOT part of pkatagames_sdk
+are licensed under the:
 MIT License
 
-project started by: Gaudia Tech Inc.
-+ authored by various users see the CONTRIBUTORS file
-
-started in year 2021
-
-contact@kata.games
+the presence of the pkatagames_sdk is temporary in this project,
+and it shall be removed at some point of game development.
 """
 import time
 import pkatagames_sdk as katasdk

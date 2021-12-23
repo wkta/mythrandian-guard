@@ -1,9 +1,16 @@
 from .alpha_pyg.PygproxyBringer import PygproxyBringer as _BringerCls
-
 """
-    KataSDK (c) Gaudia Tech Inc. 2018-2021
+    IMPORTANT NOTICE:
+    files inside this module are not realeased under the MIT License
     
-    about the author: www.github.com/wkta
+    this module will be removed from the "Mythrandian Guard" at some point,
+    as the game development reaches completion.
+    
+    KataSDK (c) Gaudia Tech Inc. 2018-2021
+    about:
+    www.github.com/wkta
+    www.github.com/gaudiatech
+    
     -------------------
     the SDK's structure
     -------------------
@@ -16,6 +23,7 @@ from .alpha_pyg.PygproxyBringer import PygproxyBringer as _BringerCls
                             ->pygame_emu
     -------------------
 """
+
 
 version = VERSION = _BringerCls.instance().framework_version
 
