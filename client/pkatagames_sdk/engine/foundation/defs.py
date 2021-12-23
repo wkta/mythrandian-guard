@@ -16,7 +16,7 @@ OLD_SCHOOL_MODE = 'oldschool'
 SUPER_RETRO_MODE = 'superretro'
 
 
-from katagames_sdk.en_parts.structures import enum_builder_generic
+from .structures import enum_builder_generic
 
 
 def enumeration_pr_events_engine(*sequential, **named):
@@ -38,6 +38,8 @@ EngineEvTypes = enumeration_pr_events_engine(
 
     'GameBegins',  # correspond à l'ancien InitializeEvent
     'GameEnds',  # indique que la sortie de jeu est certaine
+
+    'BtClick',
 
     'FocusCh',
     'FieldCh',

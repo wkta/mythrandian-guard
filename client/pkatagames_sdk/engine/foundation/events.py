@@ -2,8 +2,8 @@ import json
 import time
 import weakref
 from abc import abstractmethod
-import katagames_sdk.en_parts.conf_eng as engineconf
-from katagames_sdk.en_parts.defs import EngineEvTypes, FIRST_CUSTO_TYPE, USEREVENT
+from . import conf_eng as engineconf
+from .defs import EngineEvTypes, FIRST_CUSTO_TYPE, USEREVENT
 from collections import deque as deque_obj
 
 PygameBridge = None

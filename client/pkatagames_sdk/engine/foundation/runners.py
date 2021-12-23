@@ -1,8 +1,8 @@
 #from katagames_sdk.capsule.engine_ground.StContainer import StContainer
-from katagames_sdk.en_parts.defs import EngineEvTypes
-from katagames_sdk.en_parts.gfx_updater import display_update
-from katagames_sdk.en_parts.events import EventReceiver
-from katagames_sdk.en_parts.structures import Stack
+from .defs import EngineEvTypes
+from .gfx_updater import display_update
+from .events import EventReceiver
+from .structures import Stack
 
 
 class GameTicker(EventReceiver):

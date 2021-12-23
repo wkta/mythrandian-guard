@@ -11,11 +11,11 @@ _defs.vernum was used to store the coremon ver. information
 
 License LGPL3
 """
-import katagames_sdk.en_parts.conf_eng as cgmconf
-import katagames_sdk.en_parts.events as kevent
-from katagames_sdk.en_parts.events import DeadSimpleManager
-from katagames_sdk.en_parts.runners import GameTicker, StackBasedGameCtrl
-from katagames_sdk.en_parts.defs import version
+from .foundation import conf_eng as cgmconf
+from .foundation import events as kevent
+from .foundation.events import DeadSimpleManager
+from .foundation.runners import GameTicker, StackBasedGameCtrl
+from .foundation.defs import version
 
 engine_is_init = False
 headless_mode = False
@@ -26,7 +26,7 @@ _multistate = False
 _stack_based_ctrl = None
 
 
-def init(pygame_module, gfxmode_str, caption=None, maxfps=60):
+def legacyinit(pygame_module, gfxmode_str, caption=None, maxfps=60):
     global engine_is_init, game_ticker, SCR_SIZE
 
     pygame_module.init()
@@ -120,9 +120,10 @@ def get_manager():
     return kevent.gl_unique_manager
 
 
-def cleanup(pygame_pym):
+def cleanup():
     global engine_is_init
     assert engine_is_init
+    pygame_pym = cgmconf.pygame
 
     if not cgmconf.runs_in_web:
         kevent.gl_unique_manager.hard_reset()

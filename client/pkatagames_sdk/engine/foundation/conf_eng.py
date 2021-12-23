@@ -1,18 +1,16 @@
-from katagames_sdk.en_parts.hacks.ProxyFactory import ProxyFactory
 
-runs_in_web = ProxyFactory.instance().uses_web_ctx()
-pygame = ProxyFactory.instance().build()
+"""
+to be set externally when engine.init is called
+"""
+runs_in_web = None
+pygame = None
+pygame_gfxdraw = None
 
 
-def import_gfxdraw():
-    return ProxyFactory.instance().build_gfxdraw()
-
-
+# OTHER vars
 CONST_SCR_SIZE = (960, 540)
-
 screen = None  # ref to Surface
 
-# ---------------------------------
 #  exec in the regular ctx
 # ---------------------------------
 _real_pygamescreen = None
@@ -22,7 +20,6 @@ ctx_emuvram = None
 
 canvas_rendering = None
 ctx_rendering = None
-
 
 _stored_upscaling = 1
 

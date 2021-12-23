@@ -1,5 +1,4 @@
-import katagames_sdk.en_parts.conf_eng as cgmconf
-from katagames_sdk.en_parts.conf_eng import pygame
+from . import conf_eng as cgmconf
 
 
 def display_update():
@@ -16,6 +15,7 @@ def display_update():
         # ---------------
         #  runs in ctx Win/Mac
         # ---------------
+        pygame = cgmconf.pygame
         realscreen = pygame.display.get_surface()
         if 1 == cgmconf.get_upscaling():
             realscreen.blit(cgmconf.screen, (0, 0))
