@@ -9,10 +9,10 @@ Author:
  Thomas Iwaszko
 """
 
-from ..alpha_pyg.PygproxyBringer import PygproxyBringer as _BringerCls
 from . import legacy as eng_
 from .foundation import conf_eng as cgmconf, events as kevent
 from .foundation import defs as _defs
+from ..alpha_pyg.PygproxyBringer import PygproxyBringer as _BringerCls
 
 
 # --------------------------------------------------
@@ -45,7 +45,7 @@ def import_gfxdraw():
 
 
 def import_pygame():
-    return cgmconf.pygame
+    return _BringerCls.instance().pygame()
 
 
 def embody_lib(givenmodule):

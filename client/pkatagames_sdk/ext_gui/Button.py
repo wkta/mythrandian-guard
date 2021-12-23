@@ -2,23 +2,31 @@ from ..engine.foundation.events import EventReceiver
 from .. import engine as kataen
 
 
-import pygame
-# pygame = PygameProvider.instance().provide()
+# import pygame
+pygame = kataen.import_pygame()
 
 
 class ButtonPanel(EventReceiver):
 
-    def __init__(self, button_list=None):
+    def __init__(self, button_list=None, callbacks=None):
         super().__init__()
         self._lb = list()
         if button_list:
             self._lb.extend(button_list)
 
+        if callbacks:
+            self._callbacks = callbacks
+        else:
+            self._callbacks = dict()
+
     def proc_event(self, ev, source):
         if ev.type == pygame.MOUSEBUTTONDOWN:
             for bobj in self._lb:
                 if bobj.rect.collidepoint(ev.pos):
-                    self.pev(kataen.EngineEvTypes.BTCLICK)
+                    try:
+                        self._callbacks[bobj.ident]()
+                    except KeyError:
+                        self.pev(kataen.EngineEvTypes.BTCLICK, bt_ident=bobj.ident)
 
 
 class Button(pygame.sprite.Sprite):
