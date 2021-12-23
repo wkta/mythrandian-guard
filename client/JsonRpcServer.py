@@ -103,10 +103,19 @@ class JsonRpcServer:
         return mimic_method
 
 
+DEV_SERVER = True
+
 if __name__ == '__main__':
-    print('--- test JsonRpcServer class ---')
+    print('--- testing the JsonRpcServer class ---')
+    print()
+
     server = JsonRpcServer.instance()
-    server.set_endpoint('http://sc.gaudia-tech.com/tom/bo-server/rpc_endpoint/')
+    if DEV_SERVER:
+        server.set_endpoint('http://10.0.0.13/~tom/server/rpc_endpoint.php')
+    else:
+        server.set_endpoint('http://sc.gaudia-tech.com/tom/bo-server/rpc_endpoint/')
+
+    # - calling various server-side functions
     server.set_prefix('Math')
     print(
         server.subtract(a=877, b=70)
