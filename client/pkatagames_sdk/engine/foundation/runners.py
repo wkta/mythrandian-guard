@@ -1,4 +1,4 @@
-#from katagames_sdk.capsule.engine_ground.StContainer import StContainer
+from ..StContainer import StContainer
 from .defs import EngineEvTypes
 from .gfx_updater import display_update
 from .events import EventReceiver
@@ -45,26 +45,23 @@ class GameTicker(EventReceiver):
 # - - -  - -
 class StackBasedGameCtrl(EventReceiver):
 
-    def __init__(self, existing_ticker, gamestates_enum, glvars_pymodule, use_katagame_env, stmapping=None):
+    def __init__(self, existing_ticker, gamestates_enum, stmapping, glvars_pymodule, katagame_st=None, ):
         super().__init__(sticky=True)
 
         self.ticker = existing_ticker
         self.pygame_pym = existing_ticker.pygame_pym
 
         # lets build up all gamestates objects
-        self._st_container = None  # TODO fix game states StContainer.instance()
-        # self._st_container.setup(gamestates_enum, glvars_pymodule, stmapping)
+        self._st_container = StContainer.instance()
+        self._st_container.setup(gamestates_enum, stmapping, glvars_pymodule)
 
-        if use_katagame_env:
+        if katagame_st:
             self.first_state_id = -1
+            self._st_container.hack_bios_state(katagame_st)
         else:
             self.first_state_id = 0
 
         self.__state_stack = Stack()
-
-    # not used now but can be handy for engine hacking...
-    def replace_bios_state(self, gs_obj):
-        self._st_container.hack_bios_state(gs_obj)
 
     # redefinition
     def halt(self):

@@ -13,7 +13,7 @@ from . import legacy as eng_
 from .foundation import conf_eng as cgmconf, events as kevent
 from .foundation import defs as _defs
 from ..alpha_pyg.PygproxyBringer import PygproxyBringer as _BringerCls
-
+from ._BaseGameState import BaseGameState
 
 # --------------------------------------------------
 # [  ! ]_FORCE_ expose objects_[ !  ]
@@ -50,7 +50,8 @@ def import_pygame():
 
 def embody_lib(givenmodule):
     print('*** warning embody_lib is now deprecated! ***')
-    pass
+    print('calling this function has no effect.')
+
 # -------------------- end improved backward compat' --------------------
 
 

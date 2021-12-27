@@ -19,8 +19,6 @@ from .alpha_pyg.PygproxyBringer import PygproxyBringer as _BringerCls
             ->engine
                 ~ dep -
                     ->alpha_pyg
-                        ~ dep -
-                            ->pygame_emu
     -------------------
 """
 
