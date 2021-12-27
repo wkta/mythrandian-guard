@@ -8,7 +8,15 @@ _CONST_SDK_VER_STRING = '0.0.7'
 class PygproxyBringer:
 
     def __init__(self):
+        from .EmuPygproxy import EmuPygproxy
+        from .GenuinePygproxy import GenuinePygproxy
+
         self._runs_in_web = '__BRYTHON__' in globals()
+        if self._runs_in_web:
+            self._provider = EmuPygproxy()
+        else:
+            self._provider = GenuinePygproxy()
+
         self._cached_pygame = None
         self._cached_gfxdraw = None
 
@@ -21,23 +29,11 @@ class PygproxyBringer:
         return self._runs_in_web
 
     def pygame(self):
-        if self._cached_pygame is None:  # only on 1st call
-            if self.web_enabled:
-                from .. import pygame_emu as _pygame
-            else:
-                import pygame as _pygame  # genuine lib
-            self._cached_pygame = _pygame
-
-        # exec. this line no matter what
+        if self._cached_pygame is None:
+            self._cached_pygame = self._provider.provide_pygame()
         return self._cached_pygame
 
     def pygame_gfxdraw(self):
-        if self._cached_gfxdraw is None:  # only on 1st call
-            if self.web_enabled:
-                from ..pygame_emu import gfxdraw as _gfxdraw
-            else:
-                import pygame.gfxdraw as _gfxdraw
-            self._cached_gfxdraw = _gfxdraw
-
-        # exec. this line no matter what
+        if self._cached_gfxdraw is None:
+            self._cached_gfxdraw = self._provider.provide_gfxdraw()
         return self._cached_gfxdraw
