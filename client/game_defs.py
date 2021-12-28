@@ -5,3 +5,6 @@ GameStates = enum_builder(
     'MainMenu',
     'ClickChallg'
 )
+
+username = ''
+acc_id = None
