@@ -20,8 +20,9 @@ from ._BaseGameState import BaseGameState
 # --------------------------------------------------
 version = VERSION = _defs.version
 
+from .AnimatedSprite import AnimatedSprite
 from .foundation.defs import HD_MODE, OLD_SCHOOL_MODE, SUPER_RETRO_MODE
-e = HD_MODE or OLD_SCHOOL_MODE or SUPER_RETRO_MODE
+e = AnimatedSprite or HD_MODE or OLD_SCHOOL_MODE or SUPER_RETRO_MODE
 
 from .foundation.events import EventReceiver, EngineEvTypes, CogObject, EventManager, CgmEvent
 e = e or EventReceiver or EngineEvTypes or CogObject or EventManager or CgmEvent

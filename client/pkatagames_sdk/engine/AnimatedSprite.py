@@ -1,5 +1,9 @@
-import pygame
 import json
+
+from ..alpha_pyg.PygproxyBringer import PygproxyBringer as _BringerCls
+
+
+pygame = _BringerCls.instance().pygame()
 
 
 class _Spritesheet(object):
