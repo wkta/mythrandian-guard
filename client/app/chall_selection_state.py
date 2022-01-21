@@ -5,17 +5,17 @@ from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, i
 pygame = import_pygame()
 
 
-class MenuScreenCtrl(EventReceiver):
+class ChallSelectionCtrl(EventReceiver):
     def __init__(self):
         super().__init__()
 
     # override
     def proc_event(self, ev, source=None):
         if ev.type == pygame.MOUSEBUTTONUP:
-            self.pev(EngineEvTypes.PUSHSTATE, state_ident=GameStates.ClickChallg)
+            self.pev(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Fighting)
 
 
-class MenuScreenView(EventReceiver):
+class ChallSelectionView(EventReceiver):
     def __init__(self):
         super().__init__(self)
         self._bg_color = (255, 50, 60)  # red, green, blue format
@@ -30,14 +30,14 @@ class MenuScreenView(EventReceiver):
             ev.screen.blit(self.img, self.img_pos)
 
 
-class MainMenuState(BaseGameState):
+class ChallSelectionState(BaseGameState):
     def __init__(self, gs_id, name):
         super().__init__(gs_id, name)
         self.m = self.v = self.c = None
 
     def enter(self):
-        self.v = MenuScreenView()
-        self.c = MenuScreenCtrl()
+        self.v = ChallSelectionView()
+        self.c = ChallSelectionCtrl()
         print(' MainMenuState ENTER')
         self.v.turn_on()
         self.c.turn_on()
