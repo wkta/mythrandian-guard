@@ -312,6 +312,22 @@ class Avatar:
         self._gold = gold
         self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
 
+    @property
+    def portrait_code(self):  # retro-compatibility
+        return 0
+
+    @property
+    def tokenwealth(self):  # premium money
+        return 0
+
+    @property
+    def gold(self):  # base money
+        return self._gold
+
+    @property
+    def name(self):
+        return self._name
+
     def __str__(self):
         res = ''
         res += self._name + ' | '

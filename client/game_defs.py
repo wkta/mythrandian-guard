@@ -1,10 +1,13 @@
 from pkatagames_sdk.engine.foundation.structures import enum_builder
 
-# gamestates
+# listing of gamestates
 GameStates = enum_builder(
     'MenuAventures',
-    'Fighting'
+    'Fighting',
+    'Shopping'
 )
 
+# shared variables
 username = ''
 acc_id = None
+the_avatar = None  # to be shared with other game states (local avatar's model)

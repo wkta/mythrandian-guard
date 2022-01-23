@@ -17,7 +17,7 @@ and it shall be removed at some point of game development.
 """
 import game_defs
 import pkatagames_sdk.engine as kataen
-from app import ChallSelectionState, FightingState
+from app import *
 from pkatagames_sdk.engine.foundation.defs import enum_for_custom_event_types
 from pkatagames_sdk.engine.foundation.events import CgmEvent
 from pkatagames_sdk.engine.foundation.runners import StackBasedGameCtrl
@@ -38,7 +38,8 @@ ctrl = StackBasedGameCtrl(
     game_defs.GameStates,
     {
         'MenuAventuresState': ChallSelectionState,
-        'FightingState': FightingState
+        'FightingState': FightingState,
+        'ShoppingState': ShoppingState
     },
     kataen.import_pygame(),
     katagame_st=None
