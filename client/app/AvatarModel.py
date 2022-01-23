@@ -2,7 +2,7 @@ import math
 import random
 from math import floor
 
-from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
+from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus, enum_builder
 
 
 PrimaryStats = enum_builder_nplus(
@@ -25,6 +25,15 @@ SecondaryStats = enum_builder_nplus(
 
 FULL_LIFE_SYM = -399601
 MAX_FOCUS = 20
+
+
+OmegaLackeys = enum_builder(
+    'CaveTroll',
+    'MountainTroll',
+    'FriendlySpider',
+    'SmallOrc',
+    'Slime'
+)
 
 
 class StatsFramework:
@@ -306,11 +315,55 @@ class StatsKern:
         return res
 
 
-class Avatar:
+class AvatarModel:
     def __init__(self, name, given_xp, gold):
         self._name = name
         self._gold = gold
         self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
+        self._lackeys = [None for _ in range(5)]
+
+        self._lackeys[0] = OmegaLackeys.SmallOrc
+        if random.random() < 0.6:
+            self._lackeys[1] = OmegaLackeys.FriendlySpider
+            if random.random() < 0.6:
+                self._lackeys[2] = OmegaLackeys.Slime
+                if random.random() < 0.5:
+                    self._lackeys[3] = OmegaLackeys.MountainTroll
+
+    def add_xp(self, val):
+        self._stats.stack_xp(val)
+
+    def get_team_desc(self):
+        res = ''
+        cpt = 0
+        for t in self._lackeys:
+            if t:
+                cpt += 1
+        res += '{} lackeys'.format(cpt)
+        if cpt:
+            res += ':\n'
+        for ii in range(cpt):
+            # lackey code, to str
+            res += ' - {}'.format(OmegaLackeys.inv_map[self._lackeys[ii]])
+            if ii != cpt-1:
+                res += '\n'
+        return res
+
+    @property
+    def level(self):
+        return self._stats.get_level()
+
+    @property
+    def curr_xp(self):
+        return self._stats.get_xp()
+
+    @property
+    def xp_next_level(self):
+        _f = StatsFramework()
+        curr_level = self._stats.get_level()
+        if curr_level >= _f.get_max_level():
+            return None
+        return _f.LVL_TO_XPT[curr_level+1]
 
     @property
     def portrait_code(self):  # retro-compatibility
@@ -354,6 +407,6 @@ if __name__ == '__main__':
     print('what lvl if i have {} xp?'.format(xp))
     print(sf.calc_level(xp))
     print()
-    av = Avatar('roger', 125, 35666)
+    av = AvatarModel('roger', 125, 35666)
     print('avatar model e.g.')
     print(av)
