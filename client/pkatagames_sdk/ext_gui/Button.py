@@ -35,6 +35,7 @@ class Button(pygame.sprite.Sprite):
 
     def __init__(self, pos=None, size=None, label='bt_label'):
         super().__init__()
+        self.callback = None
 
         self.ident = Button.free_bt_identifier
         Button.free_bt_identifier += 1

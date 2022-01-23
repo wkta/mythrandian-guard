@@ -1,6 +1,8 @@
 from .Button import Button
 from .Button import ButtonPanel
 from .Button2 import Button2
+from .Trigger import Trigger
+from .WidgetBo import WidgetBo
 from ..engine import EventReceiver, import_pygame
 
 """

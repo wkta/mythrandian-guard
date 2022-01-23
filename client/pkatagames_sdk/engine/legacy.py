@@ -7,8 +7,6 @@ contact author: thomas@gaudia-tech.com
 
  the structure has been slightly modified in 2021 to become web-compatible
 
-_defs.vernum was used to store the coremon ver. information
-
 License LGPL3
 """
 from .foundation import conf_eng as cgmconf
