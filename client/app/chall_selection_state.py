@@ -3,6 +3,7 @@ import random
 import game_defs
 import pkatagames_sdk
 from app.AvatarModel import AvatarModel
+from app.BelongingsModel import Artifact
 from game_defs import GameStates
 from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, import_pygame, CgmEvent
 from pkatagames_sdk.ext_gui import Button
@@ -26,6 +27,14 @@ def click_fight():
     )
 
 
+def click_gen_element():
+    # EventManager.instance().post(
+    # CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Fighting)
+    # )
+    tmp = Artifact.gen_random()
+    print(str(tmp))
+
+
 class ChallSelectionView(EventReceiver):
     def __init__(self):
         super().__init__(self)
@@ -36,23 +45,32 @@ class ChallSelectionView(EventReceiver):
 
         self._scr_size = kataen.get_screen().get_size()
 
-        self.bt_shop = Button(pos=(228 * 1, self._scr_size[1]-64), size=(150, 48), label='go to the shop')
-        self.bt_shop.callback = click_shop
-        self.bt_fight = Button(pos=(228 * 2, self._scr_size[1]-64), size=(150, 48), label='take a fight')
-        self.bt_fight.callback = click_fight
+        # - set all buttons
+        fixed_size = (150, 48)
+        bpos = list()
+        for i in range(0, 5):
+            bpos.append((228 * i, self._scr_size[1]-64))
+
+        self._buttons = {
+            'shop': Button(pos=bpos[1], size=fixed_size, label='go to the shop'),
+            'fight': Button(pos=bpos[2], size=fixed_size, label='take a fight'),
+            'reward': Button(pos=bpos[3], size=fixed_size, label='gen reward'),
+        }
+
+        self._buttons['shop'].callback = click_shop
+        self._buttons['fight'].callback = click_fight
+        self._buttons['reward'].callback = click_gen_element
 
     # override
     def proc_event(self, ev, source=None):
         if ev.type == EngineEvTypes.PAINT:
             ev.screen.fill(self._bg_color)
 
-            for bt_obj in (self.bt_shop, self.bt_fight):
+            for bt_obj in self._buttons.values():
                 ev.screen.blit(bt_obj.image, bt_obj.rect.topleft)
-            # impression txt
-            # ev.screen.blit(self.img, self.img_pos)
 
         elif ev.type == pygame.MOUSEBUTTONDOWN:
-            for bt_obj in (self.bt_shop, self.bt_fight):
+            for bt_obj in self._buttons.values():
                 if bt_obj.rect.collidepoint(ev.pos):
                     bt_obj.callback()
 
