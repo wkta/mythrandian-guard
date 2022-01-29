@@ -15,7 +15,8 @@ class Artifact:
     @classmethod
     def gen_random(cls):
         c = random.choice(ArtifactCodes.all_codes)
-        omega_elt = tuple(ArtifactNames[c].keys())
+        omega_elt = list(ArtifactNames[c].keys())
+        omega_elt.remove(0)
         return cls(c, random.choice(omega_elt))
 
     def __str__(self):
