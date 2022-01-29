@@ -2,7 +2,8 @@ import math
 import random
 from math import floor
 
-from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus, enum_builder
+from app.BelongingsModel import BelongingsModel
+from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
 
 
 PrimaryStats = enum_builder_nplus(
@@ -25,15 +26,6 @@ SecondaryStats = enum_builder_nplus(
 
 FULL_LIFE_SYM = -399601
 MAX_FOCUS = 20
-
-
-OmegaLackeys = enum_builder(
-    'CaveTroll',
-    'MountainTroll',
-    'FriendlySpider',
-    'SmallOrc',
-    'Slime'
-)
 
 
 class StatsFramework:
@@ -318,36 +310,16 @@ class StatsKern:
 class AvatarModel:
     def __init__(self, name, given_xp, gold):
         self._name = name
-        self._gold = gold
-        self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
-        self._lackeys = [None for _ in range(5)]
+        self._owned = BelongingsModel(gold)
 
-        self._lackeys[0] = OmegaLackeys.SmallOrc
-        if random.random() < 0.6:
-            self._lackeys[1] = OmegaLackeys.FriendlySpider
-            if random.random() < 0.6:
-                self._lackeys[2] = OmegaLackeys.Slime
-                if random.random() < 0.5:
-                    self._lackeys[3] = OmegaLackeys.MountainTroll
+        self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
 
     def add_xp(self, val):
         self._stats.stack_xp(val)
 
     def get_team_desc(self):
-        res = ''
-        cpt = 0
-        for t in self._lackeys:
-            if t:
-                cpt += 1
-        res += '{} lackeys'.format(cpt)
-        if cpt:
-            res += ':\n'
-        for ii in range(cpt):
-            # lackey code, to str
-            res += ' - {}'.format(OmegaLackeys.inv_map[self._lackeys[ii]])
-            if ii != cpt-1:
-                res += '\n'
-        return res
+        # returns str
+        return self._owned.describe_lackeys()
 
     @property
     def level(self):
@@ -375,7 +347,7 @@ class AvatarModel:
 
     @property
     def gold(self):  # base money
-        return self._gold
+        return self._owned.gp
 
     @property
     def name(self):
@@ -384,7 +356,7 @@ class AvatarModel:
     def __str__(self):
         res = ''
         res += self._name + ' | '
-        res += str(self._gold) + '$ | stats{ '
+        res += str(self._owned.gp) + '$ | stats{ '
         res += str(self._stats) + '}'
         return res
 
