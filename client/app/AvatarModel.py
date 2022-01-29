@@ -3,8 +3,9 @@ import random
 from math import floor
 
 from app.BelongingsModel import BelongingsModel
+from game_events import MyEvTypes
 from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
-
+from pkatagames_sdk.engine import CogObject
 
 PrimaryStats = enum_builder_nplus(
     0,
@@ -307,15 +308,20 @@ class StatsKern:
         return res
 
 
-class AvatarModel:
+class AvatarModel(CogObject):
     def __init__(self, name, given_xp, gold):
+        super().__init__()
         self._name = name
         self._owned = BelongingsModel(gold)
-
         self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
+
+    def add_gold(self, val):
+        self._owned.gp += val
+        self.pev(MyEvTypes.AvatarUpdate)
 
     def add_xp(self, val):
         self._stats.stack_xp(val)
+        self.pev(MyEvTypes.AvatarUpdate)
 
     def get_team_desc(self):
         # returns str

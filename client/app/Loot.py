@@ -1,3 +1,4 @@
+import game_defs
 from app.BelongingsModel import Artifact
 import random
 
@@ -20,6 +21,36 @@ class Loot:
         self._gold = extra_gold
         self._mana = extra_mana
         self._artifact = artifact
+
+    def is_choice_less(self):
+        """
+        if there's only xp or gold in this loot, then theres no choice
+        """
+        if self._xp is not None:
+            if self._gold or self._mana or self._artifact:
+                return False
+        if self._gold is not None:
+            if self._xp or self._mana or self._artifact:
+                return False
+        return True
+
+    def has_gold(self):
+        return self._gold is not None
+
+    @property
+    def gold(self):
+        return self._gold
+
+    @property
+    def xp(self):
+        return self.xp
+
+    def claim(self):
+        if self._gold:
+            game_defs.the_avatar.add_gold(self._gold)
+        if self._xp:
+            game_defs.the_avatar.add_xp(self._xp)
+        # TODO mana, artifacts
 
     @classmethod
     def gen_random(cls, mission_diff):
