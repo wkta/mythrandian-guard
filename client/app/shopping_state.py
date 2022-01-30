@@ -1,71 +1,14 @@
-from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, import_pygame
-from pkatagames_sdk.engine.foundation.structures import enum_builder_nplus
-import game_defs
-from pkatagames_sdk.engine import CogObject
-from game_events import MyEvTypes
-# from shared.view.AvatarStatusBarView import AvatarStatusBarView
-# from shared.views.CashbarV import CashbarV
-# from shared.views.TradeRelatedNavbar import TradeRelatedNavbar
-from pkatagames_sdk.ext_gui import Trigger, WidgetBo
 import os
 
+import glvars
+from game_defs import *
+from game_events import MyEvTypes
+from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, import_pygame
+from pkatagames_sdk.engine import CogObject
+from pkatagames_sdk.ext_gui import Trigger, WidgetBo
+
+
 pygame = import_pygame()
-
-ASSETS_DIR = 'assets'
-
-AvLooks = enum_builder_nplus(
-    3,
-    'OldMan',
-    'no4',
-    'RiceFarmer',
-    'no6',
-    'no7',
-    'no8',
-    'no9',
-    'no10',
-    'no11',
-    'no12',
-    'Smith',
-    'no14',
-    'no15',
-    'GrandPa',
-    'Amazon',
-    'no18',
-    'no19',
-    'GoldenKnight',
-    'no21',
-    'no22',
-    'Skeleton'
-)
-
-SUPPORTED_LOOKS = (
-    AvLooks.OldMan,
-    AvLooks.RiceFarmer,
-    AvLooks.Smith,
-    AvLooks.GrandPa,
-    AvLooks.Amazon,
-    AvLooks.Skeleton,
-    AvLooks.GoldenKnight
-)
-
-# TODO centraliser qq part ds un ficiher portraits/skin
-ASSOC_IDPORTRAIT_FILENAME = {
-    2: 'portrait3.png',  # pour les monstres
-    3: 'portrait3.png',
-    5: 'portrait5.png',
-    13: 'portrait13.png',
-    16: 'portrait16.png',
-    17: 'portrait17.png',
-    20: 'portrait20.png',
-    23: 'portrait23.png',
-    # 3: 'alpha_portrait.png',
-    # 5: 'beta_portrait.png',
-    # 13: 'architect.png',
-    # 16: 'marco.png',
-    # 17: 'miguel.png',
-    # 20: 'senorita.png',
-    # 23: 'simon.png',
-}
 
 
 # ------------------------------------------
@@ -107,10 +50,10 @@ class ShoppingModel(CogObject):
 
         price_infos = self._portraits_et_prix[skin_code]
         if price_infos[0] != 0:
-            if game_defs.the_avatar.gold >= price_infos[0]:
+            if glvars.the_avatar.gold >= price_infos[0]:
                 return self.MCODE_ACHAT_OK
         else:
-            if game_defs.the_avatar.tokenwealth >= price_infos[1]:
+            if glvars.the_avatar.tokenwealth >= price_infos[1]:
                 return self.MCODE_ACHAT_OK
 
         return self.MCODE_ACHAT_TROP_CHER
@@ -398,7 +341,7 @@ class ShoppingState(BaseGameState):
         print('## ----------- entree ds ShopState')
         self.m2 = ShoppingModel()  # portraits de mec
 
-        id_portrait_actuel = game_defs.the_avatar.portrait_code
+        id_portrait_actuel = glvars.the_avatar.portrait_code
         self.v = ShoppingView(self.m2, id_portrait_actuel)
         self.v.turn_on()
 

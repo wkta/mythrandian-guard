@@ -1,18 +1,22 @@
 """
-definition file for artifacts only
+Definition file for artifacts only
+IMPORTANT REMARK:
+    this file is not meant to be imported directly, preferably use -> import game_defs
 """
+
 from pkatagames_sdk.capsule.struct.misc import enum_builder
 
 
 ArtifactCodes = enum_builder(
-    'KingsPlate',  # Plate armour of the Forgotten King
-    'Relics',  # Relics of Matangi
-    'StaffNin',  # Antique staff of Nin
+    'KingsPlate',
+    'Relics',
+    'StaffNin',
 )
 
 ArtifactNames = {
     ArtifactCodes.KingsPlate: {
-        0: 'Plate Armour of the forgotten king',
+        0: 'Plate Armour of the forgotten king',  # 0 -> artifact's name, always
+
         1: 'Breastplate',
         2: 'Greaves',
         3: 'Spaulders',
@@ -21,6 +25,7 @@ ArtifactNames = {
     },
     ArtifactCodes.Relics: {
         0: 'Relics of Matangi',
+
         1: 'Loincloth',
         2: 'Club',
         3: 'Shield',
@@ -28,27 +33,30 @@ ArtifactNames = {
     },
     ArtifactCodes.StaffNin: {
         0: 'Antique Staff of Nin',
+
         1: 'The head',
         2: 'Ash wood stick'
     }
 }
 
 
-# this aims at easing info. storage
 def create_artifact_storage():
     global ArtifactNames
     """
-    return a dict of dict, the precise format is:
-    {
-        ArtifactCodes.KingsPlate: {
-            1: False,  # part 1 -> Breastplate
-            2: False,  # part 2... etc
-            3: False, 
-            4: False,  
-            5: False,
-        },
-        ...
-    }
+    Aims at easing specific info. (about the artifacts collection) storage
+    
+    :return: an objects whose precise format is
+        {
+            ArtifactCodes.KingsPlate: {
+                1: False,  # part 1 -> Breastplate
+                2: False,  # part 2... etc
+                3: False, 
+                4: False,  
+                5: False,
+            },
+            ...
+        }
+    :rtype: dict
     """
     res = dict()
     for code in ArtifactNames.keys():

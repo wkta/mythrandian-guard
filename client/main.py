@@ -37,7 +37,7 @@ ctrl = StackBasedGameCtrl(
     kataen.get_game_ctrl(),
     game_defs.GameStates,
     {
-        'MenuAventuresState': ChallSelectionState,
+        'MainScreenState': MainScreenState,
         'FightingState': FightingState,
         'ShoppingState': ShoppingState
     },

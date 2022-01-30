@@ -2,10 +2,16 @@ import math
 import random
 from math import floor
 
-from app.BelongingsModel import BelongingsModel
+from game_defs import LackeyCodes, MAX_MANA_PTS, BASE_LIMIT_LACKEYS
+from game_defs import create_artifact_storage, ArtifactCodes, ArtifactNames
 from game_events import MyEvTypes
 from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
 from pkatagames_sdk.engine import CogObject
+
+
+FULL_LIFE_SYM = -399601
+MAX_FOCUS = 20
+MAX_LEVEL = 90
 
 PrimaryStats = enum_builder_nplus(
     0,
@@ -25,12 +31,8 @@ SecondaryStats = enum_builder_nplus(
     'PowerIncrem',
 )
 
-FULL_LIFE_SYM = -399601
-MAX_FOCUS = 20
-
 
 class StatsFramework:
-    MAX_LEVEL = 90
 
     def __init__(self):
         self.LVL_TO_XPT, self.XPT_TO_LVL = dict(), dict()
@@ -38,7 +40,7 @@ class StatsFramework:
         cst = 250
         self.LVL_TO_XPT[1] = 0
         self.LVL_TO_XPT[2] = cst
-        for k in range(3, self.MAX_LEVEL + 1):
+        for k in range(3, MAX_LEVEL + 1):
             self.LVL_TO_XPT[k] = self.LVL_TO_XPT[k - 1] + cst * (k - 1)
 
         # mirror the information, in case its useful
@@ -46,7 +48,7 @@ class StatsFramework:
             self.XPT_TO_LVL[xp_req] = level
 
     def get_max_level(self):
-        return self.MAX_LEVEL
+        return MAX_LEVEL
 
     def calc_level(self, montant_xp):
         paliers_ord = list(self.XPT_TO_LVL.keys())
@@ -152,16 +154,10 @@ class StatsKern:
         prior_level = self.get_level()
         self.__curr_xp = amount
         post_level = StatsFramework().calc_level(self.__curr_xp)
-        # evt_m = EventManager.instance()
-
         if prior_level != post_level:
             self.__impacte_stats(post_level, self.bonus_eq)
             self.__level = post_level
-            # evt_m.post(CgmEvent(MyEvTypes.AvatarLevelsUp, new_level=post_level))
             return post_level
-
-        # adhoc_ev = CgmEvent(MyEvTypes.StatsChange)
-        # evt_m.post(adhoc_ev)
 
     def get_level(self):
         return self.__level
@@ -176,7 +172,8 @@ class StatsKern:
         return self.__curr_hp == self._det_stat_secondaire(SecondaryStats.MaxHp)
 
     def get_hp(self):
-        if self.__curr_hp == FULL_LIFE_SYM:  # TODO généraliser usage, évite au joueur de se blesser en changeant equip.
+        # TODO généraliser usage, évite au joueur de se blesser en changeant equip.
+        if self.__curr_hp == FULL_LIFE_SYM:
             return self.get_value(SecondaryStats.MaxHp)
         return self.__curr_hp
 
@@ -191,7 +188,9 @@ class StatsKern:
         self.__curr_hp = val
 
     def shred_hp(self, ratio):
-        # shred = diminue les pv suivant un ratio des pv max
+        """
+        shred = diminue les pv suivant un ratio des pv max
+        """
         cap = self.get_value(SecondaryStats.MaxHp, True)
         dmg = int(ratio * cap)
         self.set_hp(self.get_hp() - dmg)
@@ -209,7 +208,6 @@ class StatsKern:
         max_foca = MAX_FOCUS
         if self.__curr_focus > max_foca:
             self.__curr_focus = max_foca
-        # self._manager.post(self.ev_st_change)
 
     def has_full_focus(self):
         max_foca = MAX_FOCUS
@@ -217,7 +215,6 @@ class StatsKern:
 
     def nullify_focus(self):
         self.__curr_focus = 0
-        # self._manager.post(self.ev_st_change)
 
     def set_max_focus(self, val):
         self.__max_focus = val
@@ -308,7 +305,7 @@ class StatsKern:
         return res
 
 
-class AvatarModel(CogObject):
+class Avatar(CogObject):
     def __init__(self, name, given_xp, gold):
         super().__init__()
         self._name = name
@@ -367,8 +364,87 @@ class AvatarModel(CogObject):
         return res
 
 
+class Artifact:
+    def __init__(self, acode, element):
+        if acode not in ArtifactCodes.all_codes:
+            raise ValueError('non-valid artifact code ({})'.format(acode))
+        if (not isinstance(element, int)) or (element not in ArtifactNames[acode]):
+            raise ValueError('non-valid artifact element ({}, code={})'.format(element, acode))
+        self._code = acode
+        self._elt = element
+
+    @classmethod
+    def gen_random(cls):
+        c = random.choice(ArtifactCodes.all_codes)
+        omega_elt = list(ArtifactNames[c].keys())
+        omega_elt.remove(0)
+        return cls(c, random.choice(omega_elt))
+
+    def __str__(self):
+        res = '[{}]\n'.format(ArtifactNames[self._code][0])
+        res += '{}'.format(ArtifactNames[self._code][self._elt])
+        return res
+
+
+class BelongingsModel:
+    """
+    Modelise tt ce que l'avatar peut collectionner/posséder.
+    Dans le game design on a imaginé 7 ressources:
+
+    - Xp
+
+    - gold pieces
+    - items héros
+    - artifacts (collectibles)
+    - mana points, potion of mana
+    - lackeys (up to 5)
+    - enchantments (-> progrès temporaire/permanent)
+
+    A part l'Xp tout est modélisé via cette classe
+    """
+
+    def __init__(self, gp, lackey_list=None):
+        self.gp = gp
+        self._eq_items = {
+            'head': None, 'hands': None, 'torso': None, 'legs': None
+        }
+        self._artifacts = create_artifact_storage()
+        self._mp = MAX_MANA_PTS
+        if lackey_list:
+            self.lackeys = lackey_list
+        else:
+            self.lackeys = [None for _ in range(BASE_LIMIT_LACKEYS)]
+            self._init_random_lackeys()
+        self._enchantments = set()
+
+    def _init_random_lackeys(self):
+        self.lackeys[0] = LackeyCodes.SmallOrc
+        if random.random() < 0.6:
+            self.lackeys[1] = LackeyCodes.FriendlySpider
+            if random.random() < 0.6:
+                self.lackeys[2] = LackeyCodes.Slime
+                if random.random() < 0.5:
+                    self.lackeys[3] = LackeyCodes.MountainTroll
+
+    def describe_lackeys(self):
+        res = ''
+        cpt = 0
+        for t in self.lackeys:
+            if t:
+                cpt += 1
+        res += '{} lackeys'.format(cpt)
+        if cpt:
+            res += ':\n'
+        for ii in range(cpt):
+            # lackey code, to str
+            res += ' - {}'.format(LackeyCodes.inv_map[self.lackeys[ii]])
+            if ii != cpt-1:
+                res += '\n'
+        return res
+
+
 """
-testing stats framework + the Avatar class
+testing the stats framework + the Avatar class
 """
 if __name__ == '__main__':
     sf = StatsFramework()
@@ -385,6 +461,6 @@ if __name__ == '__main__':
     print('what lvl if i have {} xp?'.format(xp))
     print(sf.calc_level(xp))
     print()
-    av = AvatarModel('roger', 125, 35666)
+    av = Avatar('roger', 125, 35666)
     print('avatar model e.g.')
     print(av)

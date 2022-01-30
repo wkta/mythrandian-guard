@@ -1,9 +1,13 @@
-import game_defs
-from app.BelongingsModel import Artifact
 import random
+import time
+
+import glvars
+import pkatagames_sdk.engine as kataen
+from app.main_screen.models import Artifact
+from game_events import MyEvTypes
 
 
-class Loot:
+class MissionLoot:
     """
     After completing a mission,
     sometimes the player can choose between 2-3 rewards,
@@ -24,7 +28,7 @@ class Loot:
 
     def is_choice_less(self):
         """
-        if there's only xp or gold in this loot, then theres no choice
+        if there's only / gold in the loot, therefore there is no choice
         """
         if self._xp is not None:
             if self._gold or self._mana or self._artifact:
@@ -47,9 +51,9 @@ class Loot:
 
     def claim(self):
         if self._gold:
-            game_defs.the_avatar.add_gold(self._gold)
+            glvars.the_avatar.add_gold(self._gold)
         if self._xp:
-            game_defs.the_avatar.add_xp(self._xp)
+            glvars.the_avatar.add_xp(self._xp)
         # TODO mana, artifacts
 
     @classmethod
@@ -135,3 +139,66 @@ class Loot:
         if self._artifact:
             res += str(self._artifact) + '\n'
         return res
+
+
+class MissionSetModel(kataen.CogObject):  # it holds the state of missions
+    """
+    3 missions at the same time
+    """
+
+    def __init__(self):
+        super().__init__()
+        self._ongoing_missions = {
+            1: 0,
+            2: 0,
+            3: 0
+        }
+        self._difficulties = {
+            1: 1.1,
+            2: 1.5,
+            3: 2.25
+        }
+        self._temp_loots = dict()
+
+    def start_mission(self, index):
+        print('mission {} starts!'.format(index))
+        self._ongoing_missions[index] = 1
+        self.pev(MyEvTypes.MissionStarts, t=time.time(), idx=index)
+
+    def flag_mission_done(self, index):
+        print('mission {} done!'.format(index))
+        self._ongoing_missions[index] = -1
+
+        self._temp_loots[index] = obj_loot = MissionLoot.gen_random(self._difficulties[index])
+        self._difficulties[index] *= 1.07
+
+        if obj_loot.is_choice_less():
+            if obj_loot.has_gold():
+                self.pev(MyEvTypes.NotifyAutoloot, is_gold=True, amount=obj_loot.gold)
+            else:
+                self.pev(MyEvTypes.NotifyAutoloot, is_gold=False, amount=obj_loot.xp)
+            self.claim_reward(index)
+        else:
+            self.pev(MyEvTypes.MissionEnds, idx=index)
+
+    def is_m_open(self, index):
+        return 0 == self._ongoing_missions[index]
+
+    def is_m_locked(self, index):
+        return 1 == self._ongoing_missions[index]
+
+    def is_m_over(self, index):
+        return -1 == self._ongoing_missions[index]
+
+    def _reset_m_state(self, idx):
+        if not self.is_m_over(idx):
+            raise Exception
+        self._ongoing_missions[idx] = 0  # reset state
+        del self._temp_loots[idx]
+
+    def claim_reward(self, index):
+        print(self._temp_loots[index])
+        self._temp_loots[index].claim()
+
+        self._reset_m_state(index)
+        self.pev(MyEvTypes.MissionFree, idx=index)
