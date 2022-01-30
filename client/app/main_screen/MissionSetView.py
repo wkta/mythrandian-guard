@@ -1,3 +1,5 @@
+import game_defs
+import glvars
 import pkatagames_sdk as katasdk
 from app.main_screen.models import Artifact
 from game_defs import GameStates
@@ -23,12 +25,10 @@ def click_fight():
     )
 
 
-def click_gen_element():
-    # EventManager.instance().post(
-    # CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Fighting)
-    # )
+def click_loot_art():
     tmp = Artifact.gen_random()
     print(str(tmp))
+    glvars.the_avatar.add_artifact(tmp)
 
 
 class MissionSetView(EventReceiver):
@@ -38,10 +38,8 @@ class MissionSetView(EventReceiver):
 
         # small red squares to tell the mission is ongoing
         self._squares = dict()
-
         self._model = ref_mod
 
-        self._bg_color = 'antiquewhite3'  # or smth like (255, 50, 60) if we choose the red, green, blue format
         ft = pygame.font.Font(None, 19)
         # self.img = ft.render('press mouse button to change state', True, (0, 0, 0))
         self.img_pos = (200, 180)
@@ -52,7 +50,7 @@ class MissionSetView(EventReceiver):
         fixed_size = (150, 48)
         bpos = list()
         for index in range(0, 5):
-            bpos.append((228 * index, self._scr_size[1] - 50))
+            bpos.append((200 * index, self._scr_size[1] - 50))
 
         cls = self.__class__
         self._buttons = {
@@ -62,7 +60,8 @@ class MissionSetView(EventReceiver):
 
             'shop': Button(pos=bpos[1], size=fixed_size, label='go to the shop'),
             'fight': Button(pos=bpos[2], size=fixed_size, label='take a fight'),
-            'reward': Button(pos=bpos[3], size=fixed_size, label='gen reward'),
+            'get_arti': Button(pos=bpos[3], size=fixed_size, label='(cheat) loot artifact'),
+            'collection': Button(pos=bpos[4], size=fixed_size, label='check collection')
         }
 
         # dupe 3x same kind of callback func.
@@ -93,16 +92,22 @@ class MissionSetView(EventReceiver):
 
         self._buttons['shop'].callback = click_shop
         self._buttons['fight'].callback = click_fight
-        self._buttons['reward'].callback = click_gen_element
+        self._buttons['get_arti'].callback = click_loot_art
+
+        def effet_collection():
+            EventManager.instance().post(
+                CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.ShowCollection)
+            )
+        self._buttons['collection'].callback = effet_collection
 
     @staticmethod
     def position_m_square(index):
-        return 228 * index, 50
+        return 200 * index, 50
 
     # override
     def proc_event(self, ev, source=None):
         if ev.type == EngineEvTypes.PAINT:
-            ev.screen.fill(self._bg_color)
+            ev.screen.fill(game_defs.BG_COLOR)
             for bt_obj in self._buttons.values():
                 ev.screen.blit(bt_obj.image, bt_obj.rect.topleft)
             for k in range(1, 4):

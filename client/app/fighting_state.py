@@ -1,5 +1,6 @@
 import time
 
+import game_defs
 import pkatagames_sdk.engine as kataen
 from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
 from pkatagames_sdk.ext_gui.Button import ButtonPanel, Button
@@ -84,7 +85,7 @@ class VueHeros(EventReceiver):
 
         elif ev.type == EngineEvTypes.PAINT:
             scr = ev.screen
-            scr.fill('antiquewhite3')
+            scr.fill(game_defs.BG_COLOR)
             self.spr_group.draw(scr)
             self.buttons.draw(scr)
 

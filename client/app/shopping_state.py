@@ -1,5 +1,6 @@
 import os
 
+import game_defs
 import glvars
 from game_defs import *
 from game_events import MyEvTypes
@@ -267,15 +268,10 @@ class ShoppingView(EventReceiver):
     def proc_event(self, ev, source):
         if ev.type == EngineEvTypes.PAINT:
             scr = ev.screen
-
-            scr.fill('antiquewhite3')
+            scr.fill(game_defs.BG_COLOR)
             self.disp2.do_paint(scr)
-            return
 
-        # if ev.type == PlayerBuysPortrait
-        # - cest géré par la vignette déjà...
-
-        if ev.type == pygame.MOUSEBUTTONDOWN:
+        elif ev.type == pygame.MOUSEBUTTONDOWN:
             # - gérer les achats
             tmp = self.disp2.quel_trigger_touche(ev.pos)
             if tmp is not None:

@@ -17,15 +17,18 @@ and it shall be removed at some point of game development.
 """
 import game_defs
 import pkatagames_sdk.engine as kataen
-from app import *
 from pkatagames_sdk.engine.foundation.defs import enum_for_custom_event_types
+from game_events import MyEvTypes
 from pkatagames_sdk.engine.foundation.events import CgmEvent
 from pkatagames_sdk.engine.foundation.runners import StackBasedGameCtrl
 
+# import states
+from app.main_screen_state import MainScreenState
+from app.fighting_state import FightingState
+from app.shopping_state import ShoppingState
+from app.show_collection_state import ShowCollectionState
 
-MyEvTypes = enum_for_custom_event_types(
-    'ChallengeStarts',
-)
+
 CgmEvent.inject_custom_names(MyEvTypes)
 
 # - main program
@@ -33,13 +36,15 @@ kataen.init(kataen.HD_MODE)
 WIN_CAPTION = 'Mythrandian Guard'
 kataen.import_pygame().display.set_caption(WIN_CAPTION)
 # bios_like_st = KataFrameState(-1, 'bios-like', game_defs)
+
 ctrl = StackBasedGameCtrl(
     kataen.get_game_ctrl(),
     game_defs.GameStates,
     {
         'MainScreenState': MainScreenState,
         'FightingState': FightingState,
-        'ShoppingState': ShoppingState
+        'ShoppingState': ShoppingState,
+        'ShowCollectionState': ShowCollectionState
     },
     kataen.import_pygame(),
     katagame_st=None

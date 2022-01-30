@@ -4,12 +4,14 @@ from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
 # all global constants
 BASE_LIMIT_LACKEYS = 5
 MAX_MANA_PTS = 8
+BG_COLOR = 'antiquewhite3'
 
 # listing of gamestates
 GameStates = enum_builder(
     'MainScreen',
     'Fighting',
-    'Shopping'
+    'Shopping',
+    'ShowCollection'
 )
 
 

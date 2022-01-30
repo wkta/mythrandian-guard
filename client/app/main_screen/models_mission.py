@@ -54,7 +54,9 @@ class MissionLoot:
             glvars.the_avatar.add_gold(self._gold)
         if self._xp:
             glvars.the_avatar.add_xp(self._xp)
-        # TODO mana, artifacts
+        if self._artifact:
+            glvars.the_avatar.add_artifact(self._artifact)
+        # TODO mana
 
     @classmethod
     def gen_random(cls, mission_diff):

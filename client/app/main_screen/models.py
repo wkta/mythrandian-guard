@@ -32,6 +32,162 @@ SecondaryStats = enum_builder_nplus(
 )
 
 
+class Artifact:
+    def __init__(self, acode, element):
+        if acode not in ArtifactCodes.all_codes:
+            raise ValueError('non-valid artifact code ({})'.format(acode))
+        if (not isinstance(element, int)) or (element not in ArtifactNames[acode]):
+            raise ValueError('non-valid artifact element ({}, code={})'.format(element, acode))
+
+        self._code = acode
+        self._elt = element
+
+    @property
+    def element(self):
+        return self._elt
+
+    @property
+    def code(self):
+        return self._code
+
+    @classmethod
+    def gen_random(cls):
+        c = random.choice(ArtifactCodes.all_codes)
+        omega_elt = list(ArtifactNames[c].keys())
+        omega_elt.remove(0)
+        return cls(c, random.choice(omega_elt))
+
+    def __str__(self):
+        res = '[{}]\n'.format(ArtifactNames[self._code][0])
+        res += '{}'.format(ArtifactNames[self._code][self._elt])
+        return res
+
+
+class Avatar(CogObject):
+    def __init__(self, name, given_xp, gold):
+        super().__init__()
+        self._name = name
+        self._owned = BelongingsModel(gold)
+        self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
+
+    def add_artifact(self, art_obj):
+        self._owned.artifacts[art_obj.code][art_obj.element] = True
+
+    def has_artifact(self, code, elt_no):
+        """
+        :returns: true/false whether the avatar has looted this artifact or not
+        """
+        return self._owned.artifacts[code][elt_no]
+
+    def add_gold(self, val):
+        self._owned.gp += val
+        self.pev(MyEvTypes.AvatarUpdate)
+
+    def add_xp(self, val):
+        self._stats.stack_xp(val)
+        self.pev(MyEvTypes.AvatarUpdate)
+
+    def get_team_desc(self):
+        # returns str
+        return self._owned.describe_lackeys()
+
+    @property
+    def level(self):
+        return self._stats.get_level()
+
+    @property
+    def curr_xp(self):
+        return self._stats.get_xp()
+
+    @property
+    def xp_next_level(self):
+        _f = StatsFramework()
+        curr_level = self._stats.get_level()
+        if curr_level >= MAX_LEVEL:
+            return None
+        return _f.LVL_TO_XPT[curr_level+1]
+
+    @property
+    def portrait_code(self):  # retro-compatibility
+        return 0
+
+    @property
+    def tokenwealth(self):  # premium money
+        return 0
+
+    @property
+    def gold(self):  # base money
+        return self._owned.gp
+
+    @property
+    def name(self):
+        return self._name
+
+    def __str__(self):
+        res = ''
+        res += self._name + ' | '
+        res += str(self._owned.gp) + '$ | stats{ '
+        res += str(self._stats) + '}'
+        return res
+
+
+class BelongingsModel:
+    """
+    Modelise tt ce que l'avatar peut collectionner/posséder.
+    Dans le game design on a imaginé 7 ressources:
+
+    - Xp
+
+    - gold pieces
+    - items héros
+    - artifacts (collectibles)
+    - mana points, potion of mana
+    - lackeys (up to 5)
+    - enchantments (-> progrès temporaire/permanent)
+
+    A part l'Xp tout est modélisé via cette classe
+    """
+
+    def __init__(self, gp, lackey_list=None):
+        self.gp = gp
+        self._eq_items = {
+            'head': None, 'hands': None, 'torso': None, 'legs': None
+        }
+        self.artifacts = create_artifact_storage()
+        self._mp = MAX_MANA_PTS
+        if lackey_list:
+            self.lackeys = lackey_list
+        else:
+            self.lackeys = [None for _ in range(BASE_LIMIT_LACKEYS)]
+            self._init_random_lackeys()
+        self._enchantments = set()
+
+    def _init_random_lackeys(self):
+        self.lackeys[0] = LackeyCodes.SmallOrc
+        if random.random() < 0.6:
+            self.lackeys[1] = LackeyCodes.FriendlySpider
+            if random.random() < 0.6:
+                self.lackeys[2] = LackeyCodes.Slime
+                if random.random() < 0.5:
+                    self.lackeys[3] = LackeyCodes.MountainTroll
+
+    def describe_lackeys(self):
+        res = ''
+        cpt = 0
+        for t in self.lackeys:
+            if t:
+                cpt += 1
+        res += '{} lackeys'.format(cpt)
+        if cpt:
+            res += ':\n'
+        for ii in range(cpt):
+            # lackey code, to str
+            res += ' - {}'.format(LackeyCodes.inv_map[self.lackeys[ii]])
+            if ii != cpt-1:
+                res += '\n'
+        return res
+
+
 class StatsFramework:
 
     def __init__(self):
@@ -46,9 +202,6 @@ class StatsFramework:
         # mirror the information, in case its useful
         for level, xp_req in self.LVL_TO_XPT.items():
             self.XPT_TO_LVL[xp_req] = level
-
-    def get_max_level(self):
-        return MAX_LEVEL
 
     def calc_level(self, montant_xp):
         paliers_ord = list(self.XPT_TO_LVL.keys())
@@ -305,151 +458,13 @@ class StatsKern:
         return res
 
 
-class Avatar(CogObject):
-    def __init__(self, name, given_xp, gold):
-        super().__init__()
-        self._name = name
-        self._owned = BelongingsModel(gold)
-        self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
-
-    def add_gold(self, val):
-        self._owned.gp += val
-        self.pev(MyEvTypes.AvatarUpdate)
-
-    def add_xp(self, val):
-        self._stats.stack_xp(val)
-        self.pev(MyEvTypes.AvatarUpdate)
-
-    def get_team_desc(self):
-        # returns str
-        return self._owned.describe_lackeys()
-
-    @property
-    def level(self):
-        return self._stats.get_level()
-
-    @property
-    def curr_xp(self):
-        return self._stats.get_xp()
-
-    @property
-    def xp_next_level(self):
-        _f = StatsFramework()
-        curr_level = self._stats.get_level()
-        if curr_level >= _f.get_max_level():
-            return None
-        return _f.LVL_TO_XPT[curr_level+1]
-
-    @property
-    def portrait_code(self):  # retro-compatibility
-        return 0
-
-    @property
-    def tokenwealth(self):  # premium money
-        return 0
-
-    @property
-    def gold(self):  # base money
-        return self._owned.gp
-
-    @property
-    def name(self):
-        return self._name
-
-    def __str__(self):
-        res = ''
-        res += self._name + ' | '
-        res += str(self._owned.gp) + '$ | stats{ '
-        res += str(self._stats) + '}'
-        return res
-
-
-class Artifact:
-    def __init__(self, acode, element):
-        if acode not in ArtifactCodes.all_codes:
-            raise ValueError('non-valid artifact code ({})'.format(acode))
-        if (not isinstance(element, int)) or (element not in ArtifactNames[acode]):
-            raise ValueError('non-valid artifact element ({}, code={})'.format(element, acode))
-        self._code = acode
-        self._elt = element
-
-    @classmethod
-    def gen_random(cls):
-        c = random.choice(ArtifactCodes.all_codes)
-        omega_elt = list(ArtifactNames[c].keys())
-        omega_elt.remove(0)
-        return cls(c, random.choice(omega_elt))
-
-    def __str__(self):
-        res = '[{}]\n'.format(ArtifactNames[self._code][0])
-        res += '{}'.format(ArtifactNames[self._code][self._elt])
-        return res
-
-
-class BelongingsModel:
-    """
-    Modelise tt ce que l'avatar peut collectionner/posséder.
-    Dans le game design on a imaginé 7 ressources:
-
-    - Xp
-
-    - gold pieces
-    - items héros
-    - artifacts (collectibles)
-    - mana points, potion of mana
-    - lackeys (up to 5)
-    - enchantments (-> progrès temporaire/permanent)
-
-    A part l'Xp tout est modélisé via cette classe
-    """
-
-    def __init__(self, gp, lackey_list=None):
-        self.gp = gp
-        self._eq_items = {
-            'head': None, 'hands': None, 'torso': None, 'legs': None
-        }
-        self._artifacts = create_artifact_storage()
-        self._mp = MAX_MANA_PTS
-        if lackey_list:
-            self.lackeys = lackey_list
-        else:
-            self.lackeys = [None for _ in range(BASE_LIMIT_LACKEYS)]
-            self._init_random_lackeys()
-        self._enchantments = set()
-
-    def _init_random_lackeys(self):
-        self.lackeys[0] = LackeyCodes.SmallOrc
-        if random.random() < 0.6:
-            self.lackeys[1] = LackeyCodes.FriendlySpider
-            if random.random() < 0.6:
-                self.lackeys[2] = LackeyCodes.Slime
-                if random.random() < 0.5:
-                    self.lackeys[3] = LackeyCodes.MountainTroll
-
-    def describe_lackeys(self):
-        res = ''
-        cpt = 0
-        for t in self.lackeys:
-            if t:
-                cpt += 1
-        res += '{} lackeys'.format(cpt)
-        if cpt:
-            res += ':\n'
-        for ii in range(cpt):
-            # lackey code, to str
-            res += ' - {}'.format(LackeyCodes.inv_map[self.lackeys[ii]])
-            if ii != cpt-1:
-                res += '\n'
-        return res
-
-
 """
 testing the stats framework + the Avatar class
 """
 if __name__ == '__main__':
     sf = StatsFramework()
     print('max level?')
-    print(sf.get_max_level())
+    print(MAX_LEVEL)
     print()
 
     print('xp threshold Lvl 2-10?')
