@@ -1,7 +1,7 @@
 """
 Definition file for artifacts only
 IMPORTANT REMARK:
-    this file is not meant to be imported directly, preferably use -> import game_defs
+    this file is not meant to be imported directly, preferably use -> import game_defs
 """
 
 from pkatagames_sdk.capsule.struct.misc import enum_builder

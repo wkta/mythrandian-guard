@@ -51,7 +51,7 @@ class MissionLoot:
 
     def claim(self):
         if self._gold:
-            glvars.the_avatar.add_gold(self._gold)
+            glvars.the_avatar.mod_gold(self._gold)
         if self._xp:
             glvars.the_avatar.add_xp(self._xp)
         if self._artifact:

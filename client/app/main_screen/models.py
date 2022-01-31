@@ -79,7 +79,16 @@ class Avatar(CogObject):
         """
         return self._owned.artifacts[code][elt_no]
 
-    def add_gold(self, val):
+    def add_lackey(self, lackey_code):
+        cpt = 0
+        while self._owned.lackeys[cpt] is not None:
+            cpt += 1
+            if cpt == 5 and self._owned.lackeys[cpt] is None:
+                raise Exception(' lackey list FULL! Cannot expand it')
+        self._owned.lackeys[cpt] = lackey_code
+        self.pev(MyEvTypes.AvatarUpdate)
+
+    def mod_gold(self, val):
         self._owned.gp += val
         self.pev(MyEvTypes.AvatarUpdate)
 
@@ -120,6 +129,10 @@ class Avatar(CogObject):
         return self._owned.gp
 
     @property
+    def lackeys_desc(self):
+        return self._owned.describe_lackeys()
+
+    @property
     def name(self):
         return self._name
 
@@ -158,8 +171,9 @@ class BelongingsModel:
         if lackey_list:
             self.lackeys = lackey_list
         else:
+            # starts with no lackey...
             self.lackeys = [None for _ in range(BASE_LIMIT_LACKEYS)]
-            self._init_random_lackeys()
+
         self._enchantments = set()
 
     def _init_random_lackeys(self):

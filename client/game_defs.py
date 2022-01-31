@@ -1,4 +1,5 @@
 from artifacts import *
+from lackeys import *
 from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
 
 # all global constants
@@ -12,15 +13,6 @@ GameStates = enum_builder(
     'Fighting',
     'Shopping',
     'ShowCollection'
-)
-
-
-LackeyCodes = enum_builder(
-    'CaveTroll',
-    'MountainTroll',
-    'FriendlySpider',
-    'SmallOrc',
-    'Slime'
 )
 
 EnchantmentCodes = enum_builder(

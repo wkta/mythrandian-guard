@@ -20,9 +20,9 @@ class AvatarView(EventReceiver):
         self._y_BASEPOS = 100
 
         self._labels = self._lblsizes = None
-        self._update_avatar_desc()
+        self.refresh_disp()
 
-    def _update_avatar_desc(self):
+    def refresh_disp(self):
         # two temp variables
         ft = pygame.font.Font(None, 19)
         txtcolor = (16, 16, 128)
@@ -53,4 +53,4 @@ class AvatarView(EventReceiver):
             pygame.draw.rect(ev.screen, 'steelblue', ((self._x_BASEPOS-136, self._y_BASEPOS), (150, mx_y+16)), 2)
 
         elif ev.type == MyEvTypes.AvatarUpdate:
-            self._update_avatar_desc()
+            self.refresh_disp()

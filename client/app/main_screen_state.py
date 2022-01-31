@@ -86,5 +86,6 @@ class MainScreenState(BaseGameState):
     def resume(self):
         print(' MainMenuState RESUME')
         self.v.turn_on()
+        self.vavatar.refresh_disp()
         self.vavatar.turn_on()
         self.c.turn_on()

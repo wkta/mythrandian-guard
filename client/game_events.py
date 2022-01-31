@@ -4,6 +4,8 @@ from pkatagames_sdk.engine import enum_for_custom_event_types
 MyEvTypes = enum_for_custom_event_types(
     'ChallengeStarts',  # is it useful in this project?
 
+    'LackeyBought',  # contains idx
+
     'PlayerBuysItem',
     'WannaBuySkin',  # deprec
     'EquipOwnedSkin',  # deprec
