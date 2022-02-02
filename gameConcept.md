@@ -47,3 +47,10 @@ Bonuses (=stats buff) can be acquired via avatar's gear *Or* enchantments:
   * *Gold Touch* passive gold income +20%
   * *Grounded* max hp +10%
 
+## Combat
+this part should describe rules that determines the outcome of a fight.
+for missions usually you can send 3-6 fighters if you are not trying anything
+fancy, just sending the team: DD + Tank + Support should give a good
+probability of success. Doubling this should give 100% success rate.
+
+Check `fight_sim.py` for more detailled infos.
