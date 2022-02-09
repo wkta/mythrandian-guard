@@ -1,6 +1,5 @@
 import glvars
-from game_events import MyEvTypes
-from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, import_pygame
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, import_pygame
 from app.shopping.ShoppingModel import ShoppingModel
 from app.shopping.ShoppingView import ShoppingView
 

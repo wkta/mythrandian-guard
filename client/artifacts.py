@@ -4,7 +4,7 @@ IMPORTANT REMARK:
     this file is not meant to be imported directly, preferably use -> import game_defs
 """
 
-from pkatagames_sdk.capsule.struct.misc import enum_builder
+from katagames_sdk.capsule.struct.misc import enum_builder
 
 
 ArtifactCodes = enum_builder(

@@ -1,11 +1,11 @@
 import game_defs
 import glvars
-import pkatagames_sdk as katasdk
+import katagames_sdk as katasdk
 from app.main_screen.models import Artifact
 from game_defs import GameStates
 from game_events import MyEvTypes
-from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, CgmEvent
-from pkatagames_sdk.ext_gui import Button
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, CgmEvent
+from katagames_sdk.ext_gui import Button
 
 
 kataen = katasdk.engine

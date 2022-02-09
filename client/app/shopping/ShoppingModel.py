@@ -3,7 +3,7 @@ import random
 import glvars
 from game_defs import *
 from game_events import MyEvTypes
-from pkatagames_sdk.engine import CogObject
+from katagames_sdk.engine import CogObject
 
 
 class ShoppingModel(CogObject):

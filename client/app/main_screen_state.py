@@ -2,14 +2,14 @@ import random
 import time
 
 import glvars
-import pkatagames_sdk as katasdk
+import katagames_sdk as katasdk
 from app.main_screen.AvatarView import AvatarView
 from app.main_screen.MissionSetView import MissionSetView
 from app.main_screen.models import Avatar
 from app.main_screen.models_mission import MissionSetModel
 from game_defs import GameStates
 from game_events import MyEvTypes
-from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
 
 
 kataen = katasdk.engine

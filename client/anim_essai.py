@@ -1,7 +1,7 @@
 import time
 
-import pkatagames_sdk.engine as kataen
-from pkatagames_sdk.ext_gui.Button import ButtonPanel, Button
+import katagames_sdk.engine as kataen
+from katagames_sdk.ext_gui.Button import ButtonPanel, Button
 
 
 pygame = kataen.import_pygame()

@@ -1,9 +1,9 @@
-import pkatagames_sdk
+import katagames_sdk
 from game_events import MyEvTypes
-from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
 
 
-kataen = pkatagames_sdk.engine
+kataen = katagames_sdk.engine
 pygame = import_pygame()
 
 

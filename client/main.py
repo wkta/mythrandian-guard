@@ -8,19 +8,16 @@ project started by: wkta-tom (contact@kata.games )
 started in Dec. 2021
 
 important notice:
-All project files (source-code) that ARE NOT part of pkatagames_sdk
+All project files (source-code) that ARE NOT part of katagames_sdk
 are licensed under the:
 MIT License
-
-the presence of the pkatagames_sdk is temporary in this project,
-and it shall be removed at some point of game development.
 """
 import game_defs
-import pkatagames_sdk.engine as kataen
-from pkatagames_sdk.engine.foundation.defs import enum_for_custom_event_types
+import katagames_sdk.engine as kataen
+from katagames_sdk.engine.foundation.defs import enum_for_custom_event_types
 from game_events import MyEvTypes
-from pkatagames_sdk.engine.foundation.events import CgmEvent
-from pkatagames_sdk.engine.foundation.runners import StackBasedGameCtrl
+from katagames_sdk.engine.foundation.events import CgmEvent
+from katagames_sdk.engine.foundation.runners import StackBasedGameCtrl
 
 # import states
 from app.main_screen_state import MainScreenState

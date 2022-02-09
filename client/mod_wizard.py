@@ -3,13 +3,13 @@
 # sys.path.append('../vendor')
 import os
 
-from pkatagames_sdk.alpha_pyg.util import underscore_format
+from katagames_sdk.alpha_pyg.util import underscore_format
 
 
 MSG_INVITE = "how to name the new module? *** plz use CamelCase *** (or hit Enter to cancel)\n> "
 
 TEMPLATE = "\
-from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame\n\
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame\n\
 \n\
 \n\
 pygame = import_pygame()\n\

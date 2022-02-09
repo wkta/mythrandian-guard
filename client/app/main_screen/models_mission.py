@@ -2,7 +2,7 @@ import random
 import time
 
 import glvars
-import pkatagames_sdk.engine as kataen
+import katagames_sdk.engine as kataen
 from app.main_screen.models import Artifact
 from game_events import MyEvTypes
 

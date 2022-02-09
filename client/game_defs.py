@@ -1,6 +1,6 @@
 from artifacts import *
 from lackeys import *
-from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
+from katagames_sdk.capsule.struct.misc import enum_builder_nplus
 
 # all global constants
 BASE_LIMIT_LACKEYS = 5

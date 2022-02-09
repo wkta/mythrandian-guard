@@ -21,15 +21,19 @@ You start with a hero, you collect new gear and new Lackeys by picking up missio
 ## Chosen tech stack (overview)
 
 Python and the katagames SDK on the client-side,\
-PHP on the server-side.\
+PHP on the server-side.
 
 *Python et le SDK katagames côté client,*\
-*PHP sur le côté serveur.*\
+*PHP sur le côté serveur.*
 
 
 ## Development: client-side
 
 Main file for now is `main.py`
+in order to run this game, you need the katagames_sdk (nightly build)
+that can be found via `github.com/gaudiatech`. Check the repo named `katasdk-public`.
+There, you can grab `src\katagames_sdk` and simply copy the folder inside the `client\` folder
+of the current project. Congrats, you can run the game client now!
 
 ## Development: server-side
 

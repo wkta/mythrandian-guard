@@ -5,8 +5,8 @@ from math import floor
 from game_defs import LackeyCodes, MAX_MANA_PTS, BASE_LIMIT_LACKEYS
 from game_defs import create_artifact_storage, ArtifactCodes, ArtifactNames
 from game_events import MyEvTypes
-from pkatagames_sdk.capsule.struct.misc import enum_builder_nplus
-from pkatagames_sdk.engine import CogObject
+from katagames_sdk.capsule.struct.misc import enum_builder_nplus
+from katagames_sdk.engine import CogObject
 
 
 FULL_LIFE_SYM = -399601

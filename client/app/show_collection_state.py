@@ -1,6 +1,6 @@
 import game_defs
 import glvars
-from pkatagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
 
 
 pygame = import_pygame()

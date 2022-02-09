@@ -1,12 +1,12 @@
 import os
 
 import game_defs
-import pkatagames_sdk.engine as kataen
+import katagames_sdk.engine as kataen
 from app.shopping.ShoppingModel import ShoppingModel
 from game_defs import *
 from game_events import MyEvTypes
-from pkatagames_sdk.engine import EngineEvTypes, EventReceiver
-from pkatagames_sdk.ext_gui import Trigger, WidgetBo
+from katagames_sdk.engine import EngineEvTypes, EventReceiver
+from katagames_sdk.ext_gui import Trigger, WidgetBo
 
 pygame = kataen.import_pygame()
 

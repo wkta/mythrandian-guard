@@ -15,7 +15,7 @@ import json
 from json import JSONDecodeError
 
 import requests
-from pkatagames_sdk.alpha_pyg.Singleton import Singleton
+from katagames_sdk.alpha_pyg.Singleton import Singleton
 
 
 """

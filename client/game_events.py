@@ -1,4 +1,4 @@
-from pkatagames_sdk.engine import enum_for_custom_event_types
+from katagames_sdk.engine import enum_for_custom_event_types
 
 
 MyEvTypes = enum_for_custom_event_types(
