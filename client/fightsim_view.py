@@ -45,16 +45,22 @@ def map_to_screen(math_sys_pos):
 # ------------
 # how to draw
 # ------------
-def draw_fighters(screen, alive_fighters, left_team, col, refmod):
+def draw_fighters(screen, right_team, col, battlemod):
     global mpositions
     ft = pygame.font.Font(None, 22)
+    alive_f_li = battlemod.det_idx_live_fighters(right_team)
     for n in range(1, 8):
-        i = n if left_team else -n
-        if i in alive_fighters:
+        i = -n if right_team else n
+        if i in alive_f_li:
             x, y = map_to_screen(mpositions[i])
-            pygame.draw.circle(screen, col, (x, y), 8)
 
-            fighterinfo = str(refmod[abs(i)-1])
+            fighter_obj = battlemod[i]
+            if not fighter_obj.ranged:
+                pygame.draw.circle(screen, col, (x, y), 8)
+            else:
+                pygame.draw.rect(screen, col, ((x-6, y-6), (12, 12)))
+
+            fighterinfo = str(fighter_obj)
             for j, txtchunk in enumerate(fighterinfo.split("\n")):
                 tile = ft.render(txtchunk, False, 'gray')
                 screen.blit(tile, (x-tile.get_size()[0]//2, y+(j+1)*14))
