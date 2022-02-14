@@ -61,6 +61,47 @@ class GenFighter:
 
 
 class Battle:
+    """
+    What are combat slots?
+
+       -ranged-> |    -other->
+      ___.___._3_|___°___°_6_°___
+      ___._2_.___|_4_°___°___°_7_
+      _1_.___.___|___°_5_°___°___
+
+    Battle logic=
+    - RANGED characters are put in the back (3 possible slots), while REGULAR chars are
+       put in the front (4 possible slots)
+
+    - both categories get sorted separately, based on their initiative stat.
+       for example RANGED fighters with ini. stats 8, 11, 3 would receive slots 2, 1, 3
+       while REGULAR fighters with same ini. stats would receive slots
+
+    - a fighter attacks the closest enemy, unless he's using a special attack
+    """
+    def find_closest_enemy(self, from_slot_n):
+        """
+        :param from_slot_n:
+
+        :return: pair slot_number, fighter to be hit
+        """
+        # the larger the abs(number), the closest the enemy is
+        candidate = None
+        if self._fetch(from_slot_n).team == 0:
+            live_en = self.det_idx_live_fighters(True)
+            for i in range(-1, -8, -1):
+                if i in live_en:
+                    candidate = i
+        else:
+            live_en = self.det_live_fighters(False)
+            for i in range(1, 8):
+                if i in live_en:
+                    candidate = i
+        return candidate, self.assoc_slot_idfighter[candidate]
+
+    def _fetch(self, key):
+        return self.assoc_slot_idfighter[key]
+
     # TODO order based on the Initiative stat.
 
     def __init__(self, teama, teamb):
@@ -71,38 +112,35 @@ class Battle:
         self.inject_proc_sorting(teamb, True)
         print("done!\n")
 
-    def inject_proc_sorting(self, equipe, right_team):
+    def _tri(self, target_slots, equipe, sorting_ranged_b):
+        """
+        méthode privée (utile à l'algorithme de inject_proc_sorting...) pour faciliter le tri
+        :param target_slots: une liste de positions qq part dans [-7 à -1] ou [1 à 7]
+        :param equipe:
+        :param sorting_ranged_b: bool
+        """
         tripl_list = list()
 
         # add triples (ini, level, fighter id)
         for fobj in equipe.to_list():
-            if fobj.ranged:
+            if fobj.ranged == sorting_ranged_b:
                 tripl_list.append((fobj.ini, fobj.level, fobj.ident))
         tripl_list.sort(key=lambda u: (u[0], u[1]), reverse=True)
         cpt = 0
-        dest = (1, 2, 3)
+
         while cpt < len(tripl_list):
-            d = dest[cpt]
-            if right_team:
-                d *= -1
+            d = target_slots[cpt]
             self.assoc_slot_idfighter[d] = equipe.get_by_id(tripl_list[cpt][2])
             cpt += 1
 
-        del tripl_list[:]
+    def inject_proc_sorting(self, equipe, right_team):
+        # - sort ranged guys
+        dest = [-1, -2, -3] if right_team else [1, 2, 3]
+        self._tri(dest, equipe, True)
 
-        # sort non-ranged
-        for fobj in equipe.to_list():
-            if not fobj.ranged:
-                tripl_list.append((fobj.ini, fobj.level, fobj.ident))
-        tripl_list.sort(key=lambda u: (u[0], u[1]), reverse=True)
-        cpt = 0
-        dest = (4, 5, 6, 7)
-        while cpt < len(tripl_list):
-            d = dest[cpt]
-            if right_team:
-                d *= -1
-            self.assoc_slot_idfighter[d] = equipe.get_by_id(tripl_list[cpt][2])
-            cpt += 1
+        # - sort non-ranged guys
+        dest = [-4, -5, -6, -7] if right_team else [4, 5, 6, 7]
+        self._tri(dest, equipe, False)
 
     def __getitem__(self, item):
         return self.assoc_slot_idfighter[item]
@@ -132,24 +170,21 @@ class Battle:
 
         live_a = self.det_live_fighters(True)
         live_b = self.det_live_fighters(False)
-        forder = {
-            1: (live_a.values(), live_b.values()),
-            0: (live_b.values(), live_a.values())
-        }
 
         # rq : here the ally hits only one guy but the order is random!
+        parite = turn_num % 2 == 0
+        attackers = live_a if parite else live_b
 
-        attackers, defenders = forder[turn_num % 2]
-        for obj_atk in attackers:
-            for enemy in defenders:
-                if enemy.hp > 0:
-                    enemy.hp -= obj_atk.dmg
-                    print('F#{}  hits  F#{} '.format(obj_atk.ident, enemy.ident), end='')
-                    if enemy.hp <= 0:
-                        print('...And F#{} dies!'.format(enemy.ident))
-                    else:
-                        print()
-                    break  # hit one guy only
+        for from_slot, atker_obj in attackers.items():
+            s, enemy = self.find_closest_enemy(from_slot)
+            enemy.hp -= atker_obj.dmg
+            print('F#{}  hits  F#{} '.format(atker_obj.ident, enemy.ident), end='')
+            if enemy.hp <= 0:
+                print('...And F#{} dies!'.format(enemy.ident))
+                if self.is_over():
+                    break
+            else:
+                print()
 
         if self.is_over():
             print('battle has ended at turn {} !!!'.format(turn_num))
@@ -165,8 +200,13 @@ class Team:
 
     etc.
     """
-    def __init__(self, fighterset):
+    def __init__(self, fighterset, right_team):
         self._content = list(fighterset)
+        for elt in self._content:
+            if not right_team:
+                elt.team = 0
+            else:
+                elt.team = 1
         # TODO verifications
 
     def get_by_id(self, i):
@@ -198,11 +238,11 @@ def run_simu():
     prec_b = [GenFighter.gen_random(False) for _ in range(2)]
     prec_b.extend([GenFighter.gen_random(True) for _ in range(3)])
 
-    b = Battle(Team(prec_a), Team(prec_b))
+    b = Battle(Team(prec_a, False), Team(prec_b, True))
 
     # game loop
     gameover = False
-    turn = 0
+    turn = 1
     can_update = False
     while not gameover:
         for ev in pygame.event.get():
