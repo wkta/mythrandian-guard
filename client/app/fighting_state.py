@@ -1,12 +1,11 @@
 import time
-
 import game_defs
 import katagames_sdk.engine as kataen
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
 from katagames_sdk.ext_gui.Button import ButtonPanel, Button
 
 
-pygame = import_pygame()
+pygame = kataen.pygame
 
 
 class FightingState(BaseGameState):
@@ -36,11 +35,11 @@ class VueHeros(EventReceiver):
 
     def _init_logic(self):
         global player_spr, lizard_spr, panel
-        spr = player_spr = kataen.AnimatedSprite('assets/knightye_sheet')
+        spr = player_spr = kataen.anim.AnimatedSprite('assets/knightye_sheet')
         spr.preload()
         spr.rect.topleft = (256, 0)
 
-        spr2 = lizard_spr = kataen.AnimatedSprite('assets/lizardgr_sheet')
+        spr2 = lizard_spr = kataen.anim.AnimatedSprite('assets/lizardgr_sheet')
         spr2.preload()
         spr2.rect.topleft = (0, 0)
 

@@ -1,15 +1,14 @@
 import game_defs
 import glvars
-import katagames_sdk as katasdk
 from app.main_screen.models import Artifact
 from game_defs import GameStates
 from game_events import MyEvTypes
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, CgmEvent
+from katagames_sdk.engine import EngineEvTypes, EventReceiver, EventManager, CgmEvent
 from katagames_sdk.ext_gui import Button
+import katagames_sdk.engine as kataen
 
 
-kataen = katasdk.engine
-pygame = katasdk.import_pygame()
+pygame = kataen.pygame
 
 
 # -- to be bound to GUI buttons --

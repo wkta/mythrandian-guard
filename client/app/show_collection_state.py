@@ -1,9 +1,10 @@
 import game_defs
 import glvars
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
+import katagames_sdk.engine as kataen
 
 
-pygame = import_pygame()
+pygame = kataen.pygame
 
 
 # Nota Bene.

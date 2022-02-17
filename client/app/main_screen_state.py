@@ -10,10 +10,10 @@ from app.main_screen.models_mission import MissionSetModel
 from game_defs import GameStates
 from game_events import MyEvTypes
 from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
+import katagames_sdk.engine as kataen
 
 
-kataen = katasdk.engine
-pygame = katasdk.import_pygame()
+pygame = kataen.pygame
 
 
 class ChallSelectionCtrl(EventReceiver):

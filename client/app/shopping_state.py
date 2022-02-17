@@ -1,10 +1,11 @@
 import glvars
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager, import_pygame
+from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager
 from app.shopping.ShoppingModel import ShoppingModel
 from app.shopping.ShoppingView import ShoppingView
+import katagames_sdk.engine as kataen
 
 
-pygame = import_pygame()
+pygame = kataen.pygame
 
 
 class ShoppingCtrl(EventReceiver):

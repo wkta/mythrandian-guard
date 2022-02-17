@@ -29,9 +29,9 @@ from app.show_collection_state import ShowCollectionState
 CgmEvent.inject_custom_names(MyEvTypes)
 
 # - main program
-kataen.init(kataen.HD_MODE)
+kataen.init()
 WIN_CAPTION = 'Mythrandian Guard'
-kataen.import_pygame().display.set_caption(WIN_CAPTION)
+kataen.pygame.display.set_caption(WIN_CAPTION)
 # bios_like_st = KataFrameState(-1, 'bios-like', game_defs)
 
 ctrl = StackBasedGameCtrl(
@@ -43,7 +43,7 @@ ctrl = StackBasedGameCtrl(
         'ShoppingState': ShoppingState,
         'ShowCollectionState': ShowCollectionState
     },
-    kataen.import_pygame(),
+    kataen.pygame,
     katagame_st=None
 )
 

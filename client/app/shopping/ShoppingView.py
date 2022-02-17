@@ -8,7 +8,8 @@ from game_events import MyEvTypes
 from katagames_sdk.engine import EngineEvTypes, EventReceiver
 from katagames_sdk.ext_gui import Trigger, WidgetBo
 
-pygame = kataen.import_pygame()
+
+pygame = kataen.pygame
 
 
 

@@ -1,10 +1,10 @@
 import katagames_sdk
 from game_events import MyEvTypes
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, import_pygame
+from katagames_sdk.engine import EngineEvTypes, EventReceiver
+import katagames_sdk.engine as kataen
 
 
-kataen = katagames_sdk.engine
-pygame = import_pygame()
+pygame = kataen.pygame
 
 
 class AvatarView(EventReceiver):
