@@ -1,16 +1,16 @@
 import game_defs
 import glvars
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
-import katagames_sdk.engine as kataen
+import katagames_sdk.katagames_engine as kengi
 
 
-pygame = kataen.pygame
+pygame = kengi.pygame
+EventReceiver = kengi.event.EventReceiver
+EngineEvTypes = kengi.event.EngineEvTypes
 
 
 # Nota Bene.
 # there will be no model for the collection, as the avatar already contains it!
 # (in glvars.the_avatar.artifacts)
-
 
 BASE_Y = 55
 
@@ -61,7 +61,7 @@ class ShowCollectionCtrl(EventReceiver):
             self.pev(EngineEvTypes.POPSTATE)
 
 
-class ShowCollectionState(BaseGameState):
+class ShowCollectionState(kengi.BaseGameState):
     def __init__(self, gs_id, name):
         super().__init__(gs_id, name)
         self.m = self.v = self.c = None

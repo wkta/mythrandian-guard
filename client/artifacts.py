@@ -4,10 +4,9 @@ IMPORTANT REMARK:
     this file is not meant to be imported directly, preferably use -> import game_defs
 """
 
-from katagames_sdk.capsule.struct.misc import enum_builder
+import katagames_sdk.katagames_engine as kengi
 
-
-ArtifactCodes = enum_builder(
+ArtifactCodes = kengi.struct.enum(
     'KingsPlate',
     'Relics',
     'StaffNin',

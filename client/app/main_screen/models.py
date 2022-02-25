@@ -5,16 +5,13 @@ from math import floor
 from game_defs import LackeyCodes, MAX_MANA_PTS, BASE_LIMIT_LACKEYS
 from game_defs import create_artifact_storage, ArtifactCodes, ArtifactNames
 from game_events import MyEvTypes
-from katagames_sdk.capsule.struct.misc import enum_builder_nplus
-from katagames_sdk.engine import CogObject
-
+import katagames_sdk.katagames_engine as kengi
 
 FULL_LIFE_SYM = -399601
 MAX_FOCUS = 20
 MAX_LEVEL = 90
 
-PrimaryStats = enum_builder_nplus(
-    0,
+PrimaryStats = kengi.struct.enum(
     'Endurance',
     'Strength',
     'Perception',
@@ -22,7 +19,7 @@ PrimaryStats = enum_builder_nplus(
     'Willpower',
 )
 
-SecondaryStats = enum_builder_nplus(
+SecondaryStats = kengi.struct.enum_from_n(
     PrimaryStats.last_code + 1,
     'MaxHp',
     'BaseDmg',
@@ -63,7 +60,7 @@ class Artifact:
         return res
 
 
-class Avatar(CogObject):
+class Avatar(kengi.event.CogObj):
     def __init__(self, name, given_xp, gold):
         super().__init__()
         self._name = name

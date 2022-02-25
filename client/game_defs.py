@@ -1,6 +1,6 @@
 from artifacts import *
 from lackeys import *
-from katagames_sdk.capsule.struct.misc import enum_builder_nplus
+import katagames_sdk.katagames_engine as kengi
 
 # all global constants
 BASE_LIMIT_LACKEYS = 5
@@ -8,14 +8,14 @@ MAX_MANA_PTS = 8
 BG_COLOR = 'antiquewhite3'
 
 # listing of gamestates
-GameStates = enum_builder(
+GameStates = kengi.struct.enum(
     'MainScreen',
     'Fighting',
     'Shopping',
     'ShowCollection'
 )
 
-EnchantmentCodes = enum_builder(
+EnchantmentCodes = kengi.struct.enum(
     'Archmage',  # incr. mana regen
     'Blacksmith',  # (temp) lower price on the next armor
     'GoldenTouch',  # incr. gold loot
@@ -27,8 +27,7 @@ EnchantmentCodes = enum_builder(
 # - 4 defs here maybe deprecated? Was imported from old codebase
 ASSETS_DIR = 'assets'
 
-AvLooks = enum_builder_nplus(
-    3,
+AvLooks = kengi.struct.enum(
     'OldMan',
     'no4',
     'RiceFarmer',
@@ -63,12 +62,11 @@ SUPPORTED_LOOKS = (
 )
 
 ASSOC_IDPORTRAIT_FILENAME = {
-    2: 'portrait3.png',
-    3: 'portrait3.png',
-    5: 'portrait5.png',
-    13: 'portrait13.png',
-    16: 'portrait16.png',
-    17: 'portrait17.png',
-    20: 'portrait20.png',
-    23: 'portrait23.png'
+    0: 'portrait3.png',
+    2: 'portrait5.png',
+    10: 'portrait13.png',
+    13: 'portrait16.png',
+    14: 'portrait17.png',
+    17: 'portrait20.png',
+    20: 'portrait23.png'
 }

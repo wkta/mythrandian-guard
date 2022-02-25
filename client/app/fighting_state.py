@@ -1,14 +1,17 @@
 import time
 import game_defs
-import katagames_sdk.engine as kataen
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
-from katagames_sdk.ext_gui.Button import ButtonPanel, Button
+import katagames_sdk.katagames_engine as kengi
 
 
-pygame = kataen.pygame
+ButtonPanel, Button = kengi.gui.ButtonPanel, kengi.gui.Button
 
 
-class FightingState(BaseGameState):
+pygame = kengi.pygame
+EventReceiver = kengi.event.EventReceiver
+EngineEvTypes = kengi.event.EngineEvTypes
+
+
+class FightingState(kengi.BaseGameState):
     def __init__(self, gs_id, name):
         super().__init__(gs_id, name)
         self.m = self.v = self.c = None
@@ -35,11 +38,11 @@ class VueHeros(EventReceiver):
 
     def _init_logic(self):
         global player_spr, lizard_spr, panel
-        spr = player_spr = kataen.anim.AnimatedSprite('assets/knightye_sheet')
+        spr = player_spr = kengi.anim.AnimatedSprite('assets/knightye_sheet')
         spr.preload()
         spr.rect.topleft = (256, 0)
 
-        spr2 = lizard_spr = kataen.anim.AnimatedSprite('assets/lizardgr_sheet')
+        spr2 = lizard_spr = kengi.anim.AnimatedSprite('assets/lizardgr_sheet')
         spr2.preload()
         spr2.rect.topleft = (0, 0)
 
@@ -108,11 +111,12 @@ def anim_hit():
     lizard_spr.play('getsHit')
 
 
-class CustomListener(kataen.EventReceiver):
+
+class CustomListener(EventReceiver):
     def proc_event(self, ev, source):
         global player_spr, lizard_spr
 
-        if ev.type == kataen.EngineEvTypes.BTCLICK:
+        if ev.type == EngineEvTypes.BTCLICK:
             print(ev)
 
         elif ev.type == pygame.QUIT:

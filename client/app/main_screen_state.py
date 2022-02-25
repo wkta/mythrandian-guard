@@ -1,19 +1,17 @@
 import random
 import time
-
 import glvars
-import katagames_sdk as katasdk
+import katagames_sdk.katagames_engine as kengi
 from app.main_screen.AvatarView import AvatarView
 from app.main_screen.MissionSetView import MissionSetView
 from app.main_screen.models import Avatar
 from app.main_screen.models_mission import MissionSetModel
 from game_defs import GameStates
 from game_events import MyEvTypes
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver
-import katagames_sdk.engine as kataen
 
-
-pygame = kataen.pygame
+EngineEvTypes = kengi.event.EngineEvTypes
+EventReceiver = kengi.event.EventReceiver
+pygame = kengi.pygame
 
 
 class ChallSelectionCtrl(EventReceiver):
@@ -45,7 +43,7 @@ class ChallSelectionCtrl(EventReceiver):
             self._timers[ev.idx] = ev.t
 
 
-class MainScreenState(BaseGameState):
+class MainScreenState(kengi.BaseGameState):
     def __init__(self, gs_id, name):
         super().__init__(gs_id, name)
         self.m = self.v = self.c = None

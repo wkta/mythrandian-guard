@@ -1,7 +1,7 @@
-from katagames_sdk.engine import enum_for_custom_event_types
+import katagames_sdk.katagames_engine as kengi
 
 
-MyEvTypes = enum_for_custom_event_types(
+MyEvTypes = kengi.struct.enum(
     'ChallengeStarts',  # is it useful in this project?
 
     'LackeyBought',  # contains idx

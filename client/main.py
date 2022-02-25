@@ -13,40 +13,38 @@ are licensed under the:
 MIT License
 """
 import game_defs
-import katagames_sdk.engine as kataen
-from katagames_sdk.engine.foundation.defs import enum_for_custom_event_types
-from game_events import MyEvTypes
-from katagames_sdk.engine.foundation.events import CgmEvent
-from katagames_sdk.engine.foundation.runners import StackBasedGameCtrl
-
-# import states
-from app.main_screen_state import MainScreenState
+import glvars
+import katagames_sdk.katagames_engine as kengi
 from app.fighting_state import FightingState
+from app.main_screen_state import MainScreenState
 from app.shopping_state import ShoppingState
 from app.show_collection_state import ShowCollectionState
+from game_defs import GameStates
 
+print('Mythrandian Guard demo: /!\\ Current kengi version is: ', kengi.vernum)
 
-CgmEvent.inject_custom_names(MyEvTypes)
+CgmEvent = kengi.event.CgmEvent
+StackBasedGameCtrl = kengi.event.StackBasedGameCtrl
+# CgmEvent.inject_custom_names(MyEvTypes)
 
 # - main program
-kataen.init()
+kengi.core.init()
 WIN_CAPTION = 'Mythrandian Guard'
-kataen.pygame.display.set_caption(WIN_CAPTION)
+kengi.pygame.display.set_caption(WIN_CAPTION)
 # bios_like_st = KataFrameState(-1, 'bios-like', game_defs)
 
 ctrl = StackBasedGameCtrl(
-    kataen.get_game_ctrl(),
+    kengi.core.get_game_ctrl(),
+    glvars,
     game_defs.GameStates,
     {
-        'MainScreenState': MainScreenState,
-        'FightingState': FightingState,
-        'ShoppingState': ShoppingState,
-        'ShowCollectionState': ShowCollectionState
-    },
-    kataen.pygame,
-    katagame_st=None
+        GameStates.MainScreen: MainScreenState,
+        GameStates.Fighting: FightingState,
+        GameStates.Shopping: ShoppingState,
+        GameStates.ShowCollection: ShowCollectionState
+    }
 )
 
 ctrl.turn_on()
 ctrl.loop()
-kataen.cleanup()
+kengi.core.cleanup()

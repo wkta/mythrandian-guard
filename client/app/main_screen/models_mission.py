@@ -1,8 +1,7 @@
 import random
 import time
-
 import glvars
-import katagames_sdk.engine as kataen
+import katagames_sdk.katagames_engine as kengi
 from app.main_screen.models import Artifact
 from game_events import MyEvTypes
 
@@ -143,7 +142,7 @@ class MissionLoot:
         return res
 
 
-class MissionSetModel(kataen.CogObject):  # it holds the state of missions
+class MissionSetModel(kengi.event.CogObj):  # it holds the state of missions
     """
     3 missions at the same time
     """

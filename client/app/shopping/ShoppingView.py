@@ -1,18 +1,15 @@
 import os
 
 import game_defs
-import katagames_sdk.engine as kataen
+import katagames_sdk.katagames_engine as kengi
 from app.shopping.ShoppingModel import ShoppingModel
-from game_defs import *
+from game_defs import lackey_c_to_name, AvLooks, SUPPORTED_LOOKS, ASSETS_DIR, LackeyCodes, ASSOC_IDPORTRAIT_FILENAME
 from game_events import MyEvTypes
-from katagames_sdk.engine import EngineEvTypes, EventReceiver
-from katagames_sdk.ext_gui import Trigger, WidgetBo
 
 
-pygame = kataen.pygame
-
-
-
+pygame = kengi.pygame
+EngineEvTypes = kengi.event.EngineEvTypes
+EventReceiver = kengi.event.EventReceiver
 
 
 class MiniDispPortraits:
@@ -34,7 +31,7 @@ class MiniDispPortraits:
         if len(self.temp_lcode2asset) == 0:  # one-time init
             tmptmp = list()
             for skin_code in SUPPORTED_LOOKS:
-                WidgetBo.link_resource(  # bind gfx id. to a surface u can retrieve via .getSurface()
+                kengi.gui.WidgetBo.link_resource(  # bind gfx id. to a surface u can retrieve via .getSurface()
                     self._to_gfxid(skin_code), os.sep.join((ASSETS_DIR, ASSOC_IDPORTRAIT_FILENAME[skin_code]))
                 )
                 tmptmp.append(self._to_gfxid(skin_code))
@@ -95,7 +92,7 @@ class MiniDispPortraits:
             curr_lackey_code = self._ref_mod[cpt]
 
             # widget -
-            img = WidgetBo(
+            img = kengi.gui.WidgetBo(
                 self.temp_lcode2asset[curr_lackey_code],
                 (x, y - 50)
             )  # comme une image facile a manipuler, maybe cliquable
@@ -112,7 +109,7 @@ class MiniDispPortraits:
             tmp_pos2 = (x - 15, y + 44)
 
             # "bouton"/trigger
-            buy_trig = Trigger((x, y + 100), self.TRIG_SIZE)
+            buy_trig = kengi.gui.Trigger((x, y + 100), self.TRIG_SIZE)
             buy_trig.setLabel('Buy')
 
             # - cest ce bloc qui est essentiel -

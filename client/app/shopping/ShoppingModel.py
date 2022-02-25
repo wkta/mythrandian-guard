@@ -3,10 +3,10 @@ import random
 import glvars
 from game_defs import *
 from game_events import MyEvTypes
-from katagames_sdk.engine import CogObject
+import katagames_sdk.katagames_engine as kengi
 
 
-class ShoppingModel(CogObject):
+class ShoppingModel(kengi.event.CogObj):
 
     SHOP_SIZE = 5
 

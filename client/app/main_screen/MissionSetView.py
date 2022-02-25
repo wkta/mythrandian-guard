@@ -3,23 +3,23 @@ import glvars
 from app.main_screen.models import Artifact
 from game_defs import GameStates
 from game_events import MyEvTypes
-from katagames_sdk.engine import EngineEvTypes, EventReceiver, EventManager, CgmEvent
-from katagames_sdk.ext_gui import Button
-import katagames_sdk.engine as kataen
+import katagames_sdk.katagames_engine as kengi
 
-
-pygame = kataen.pygame
+pygame = kengi.pygame
+EngineEvTypes = kengi.event.EngineEvTypes
+EventReceiver = kengi.event.EventReceiver
+CgmEvent = kengi.event.CgmEvent
 
 
 # -- to be bound to GUI buttons --
 def click_shop():
-    EventManager.instance().post(
+    kengi.core.get_manager().post(
         CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Shopping)
     )
 
 
 def click_fight():
-    EventManager.instance().post(
+    kengi.core.get_manager().post(
         CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Fighting)
     )
 
@@ -43,7 +43,7 @@ class MissionSetView(EventReceiver):
         # self.img = ft.render('press mouse button to change state', True, (0, 0, 0))
         self.img_pos = (200, 180)
 
-        self._scr_size = kataen.get_screen().get_size()
+        self._scr_size = kengi.core.get_screen().get_size()
 
         # - set all buttons
         fixed_size = (150, 48)
@@ -53,14 +53,13 @@ class MissionSetView(EventReceiver):
 
         cls = self.__class__
         self._buttons = {
-            'm1': Button(pos=cls.position_m_square(1), size=fixed_size, label='mission1'),
-            'm2': Button(pos=cls.position_m_square(2), size=fixed_size, label='mission2'),
-            'm3': Button(pos=cls.position_m_square(3), size=fixed_size, label='mission3'),
-
-            'shop': Button(pos=bpos[1], size=fixed_size, label='go to the shop'),
-            'fight': Button(pos=bpos[2], size=fixed_size, label='take a fight'),
-            'get_arti': Button(pos=bpos[3], size=fixed_size, label='(cheat) loot artifact'),
-            'collection': Button(pos=bpos[4], size=fixed_size, label='check collection')
+            'm1': kengi.gui.Button(pos=cls.position_m_square(1), size=fixed_size, label='mission1'),
+            'm2': kengi.gui.Button(pos=cls.position_m_square(2), size=fixed_size, label='mission2'),
+            'm3': kengi.gui.Button(pos=cls.position_m_square(3), size=fixed_size, label='mission3'),
+            'shop': kengi.gui.Button(pos=bpos[1], size=fixed_size, label='go to the shop'),
+            'fight': kengi.gui.Button(pos=bpos[2], size=fixed_size, label='take a fight'),
+            'get_arti': kengi.gui.Button(pos=bpos[3], size=fixed_size, label='(cheat) loot artifact'),
+            'collection': kengi.gui.Button(pos=bpos[4], size=fixed_size, label='check collection')
         }
 
         # dupe 3x same kind of callback func.
@@ -94,7 +93,7 @@ class MissionSetView(EventReceiver):
         self._buttons['get_arti'].callback = click_loot_art
 
         def effet_collection():
-            EventManager.instance().post(
+            kengi.core.get_manager().post(
                 CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.ShowCollection)
             )
         self._buttons['collection'].callback = effet_collection

@@ -4,9 +4,9 @@ IMPORTANT REMARK:
     this file is not meant to be imported directly, preferably use -> import game_defs
 """
 
-from katagames_sdk.capsule.struct.misc import enum_builder
+import katagames_sdk.katagames_engine as kengi
 
-LackeyCodes = enum_builder(
+LackeyCodes = kengi.struct.enum(
     'CaveTroll',
     'Chimera', 'Cyclop', 'FriendlySpider', 'Gargoyle', 'Goblin',
     'Imp', 'Mercenary', 'MountainTroll', 'Slime',

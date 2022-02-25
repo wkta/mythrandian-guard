@@ -1,11 +1,12 @@
 import glvars
-from katagames_sdk.engine import BaseGameState, EngineEvTypes, EventReceiver, EventManager
 from app.shopping.ShoppingModel import ShoppingModel
 from app.shopping.ShoppingView import ShoppingView
-import katagames_sdk.engine as kataen
+import katagames_sdk.katagames_engine as kengi
 
 
-pygame = kataen.pygame
+pygame = kengi.pygame
+EventReceiver = kengi.event.EventReceiver
+EngineEvTypes = kengi.event.EngineEvTypes
 
 
 class ShoppingCtrl(EventReceiver):
@@ -33,7 +34,7 @@ class ShoppingCtrl(EventReceiver):
         #         self.ref_vue.signale_portrait_possede()
 
 
-class ShoppingState(BaseGameState):
+class ShoppingState(kengi.BaseGameState):
     def __init__(self, gs_id, name):
         super().__init__(gs_id, name)
         self.m1 = self.m2 = self.v = self.c = None
@@ -49,5 +50,5 @@ class ShoppingState(BaseGameState):
         self.c.turn_on()
 
     def release(self):
-        EventManager.instance().soft_reset()
+        kengi.core.get_manager().soft_reset()
         self.m1 = self.m2 = self.v = self.c = None
