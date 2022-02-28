@@ -40,6 +40,8 @@ class MenuGui(EventReceiver):
     """
     stores buttons, etc.
     that are not related to a mission
+
+    3 arches in the center
     """
     LABEL_COL = (211, 15, 127)
 
@@ -100,8 +102,11 @@ class MenuGui(EventReceiver):
 
     def proc_event(self, ev, source=None):
         if ev.type == EngineEvTypes.PAINT:
+
+            # buttons
             for bt_obj in self._buttons.values():
                 ev.screen.blit(bt_obj.image, bt_obj.rect.topleft)
+
             ev.screen.blit(self._wealth_spr.image, self._wealth_spr.rect.topleft)
 
             ev.screen.blit(self._label_wealth, self._pos_wealth_lbl)

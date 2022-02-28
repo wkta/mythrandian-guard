@@ -5,11 +5,58 @@ from app.main_screen.models import Artifact
 from game_defs import GameStates
 from game_events import MyEvTypes
 
-
 pygame = kengi.pygame
 EngineEvTypes = kengi.event.EngineEvTypes
 CgmEvent = kengi.event.CgmEvent
 EventReceiver = kengi.event.EventReceiver
+
+
+class ReprSingleMission:
+    """
+    full graphical representation, can draw itself
+    """
+    common_bg_image = None
+    gray_bg_image = None
+    pos_arches = dict()
+
+    def __init__(self, rank, screenwidth):  # expecting int 0-2 for rank
+        if not (-1 < rank < 3):
+            raise NotImplemented
+
+        self.button = None  # linked externally
+
+        cls = self.__class__
+        if cls.common_bg_image is None:
+            temp_img = pygame.image.load('assets/arche.png')
+            cls.common_bg_image = pygame.transform.scale(temp_img, (168, 150))
+
+            tmpii = pygame.image.load('assets/gray_arche.png')
+            cls.gray_bg_image = pygame.transform.scale(tmpii, (168, 150))
+
+            # det positions
+            borderx = 118
+            tosplit_width = screenwidth - 2 * borderx
+            decalx = tosplit_width / 4
+            yval_arches = 375
+
+            # schema:
+            #   <borderx> -decalx- . -decalx- . -decalx- . -decalx- <borderx>
+            for k in range(3):
+                ne = (borderx + (k + 1) * decalx, yval_arches)
+                cls.pos_arches[k] = ne
+
+        self.centerpos = cls.pos_arches[rank]
+        self.gray = False
+
+    def draw(self, screen):
+        cls = self.__class__
+        aw, ay = cls.common_bg_image.get_size()
+        p = self.centerpos
+        if self.gray:
+            adhoc_img = cls.gray_bg_image
+        else:
+            adhoc_img = cls.common_bg_image
+        screen.blit(adhoc_img, (p[0] - aw / 2, p[1] - ay / 2))
 
 
 class MissionSetView(EventReceiver):
@@ -17,21 +64,28 @@ class MissionSetView(EventReceiver):
     def __init__(self, ref_mod):
         super().__init__(self)
 
+        self._scr_size = kengi.core.get_screen().get_size()
+
+        fixed_size = (72, 66)
+        offsety_bt = 25
+
+        self._repr_missions = list()
+        for k in range(3):
+            temp = ReprSingleMission(k, self._scr_size[0])
+            temp.button = kengi.gui.Button(
+                pos=(temp.centerpos[0]-fixed_size[0]//2, temp.centerpos[1]+offsety_bt), size=fixed_size,
+                label='mission{}'.format(k+1)
+            )
+            self._repr_missions.append(temp)
+
         # small red squares to tell the mission is ongoing
         self._squares = dict()
         self._model = ref_mod
         self.img_pos = (200, 180)
 
-        self._scr_size = kengi.core.get_screen().get_size()
+        # img arches
 
         # - create mission buttons
-        fixed_size = (150, 48)
-        cls = self.__class__
-        self._buttons = {
-            'm1': kengi.gui.Button(pos=cls.position_m_square(1), size=fixed_size, label='mission1'),
-            'm2': kengi.gui.Button(pos=cls.position_m_square(2), size=fixed_size, label='mission2'),
-            'm3': kengi.gui.Button(pos=cls.position_m_square(3), size=fixed_size, label='mission3')
-        }
 
         # dupe 3x same kind of callback func.
         def effetm1():
@@ -55,39 +109,54 @@ class MissionSetView(EventReceiver):
                 else:  # therefore its open
                     self._model.start_mission(3)
 
-        self._buttons['m1'].callback = effetm1
-        self._buttons['m2'].callback = effetm2
-        self._buttons['m3'].callback = effetm3
+        self._repr_missions[0].button.callback = effetm1
+        self._repr_missions[1].button.callback = effetm2
+        self._repr_missions[2].button.callback = effetm3
 
     @staticmethod
     def position_m_square(index):
         return 200 * index, 50
 
+    def _paint_missionset_v(self, screen):
+        screen.fill(game_defs.BG_COLOR)
+
+        for k in range(3):
+            # dessin arches
+            self._repr_missions[k].draw(screen)
+
+            # dessin bt
+            bt_obj = self._repr_missions[k].button
+            screen.blit(bt_obj.image, bt_obj.rect.topleft)
+
+        for k in range(1, 4):
+            if k in self._squares:
+                surf, _ = self._squares[k]
+                pos = self._repr_missions[k - 1].button.rect.topleft
+                screen.blit(surf, pos)
+
     def proc_event(self, ev, source=None):
         if ev.type == EngineEvTypes.PAINT:
-            ev.screen.fill(game_defs.BG_COLOR)
-            for bt_obj in self._buttons.values():
-                ev.screen.blit(bt_obj.image, bt_obj.rect.topleft)
-            for k in range(1, 4):
-                if k in self._squares:
-                    surf, pos = self._squares[k]
-                    ev.screen.blit(surf, pos)
+            self._paint_missionset_v(ev.screen)
+
+        elif ev.type == pygame.MOUSEBUTTONDOWN:
+            for k in range(3):
+                bt_obj = self._repr_missions[k].button
+                if bt_obj.rect.collidepoint(ev.pos):
+                    if bt_obj.callback:
+                        bt_obj.callback()
 
         elif ev.type == MyEvTypes.MissionEnds:
             self._squares[ev.idx][0].fill((0, 255, 0))
 
         elif ev.type == MyEvTypes.MissionFree:
+            self._repr_missions[ev.idx-1].gray = False
             del self._squares[ev.idx]
 
         elif ev.type == MyEvTypes.MissionStarts:
+            self._repr_missions[ev.idx-1].gray = True
+
             tmp = pygame.Surface((80, 80))
             tmp.fill((255, 0, 0))
             adj_pos = list(MissionSetView.position_m_square(ev.idx))
             adj_pos[1] += 30  # y
             self._squares[ev.idx] = (tmp, adj_pos)
-
-        elif ev.type == pygame.MOUSEBUTTONDOWN:
-            for bt_obj in self._buttons.values():
-                if bt_obj.rect.collidepoint(ev.pos):
-                    if bt_obj.callback:
-                        bt_obj.callback()

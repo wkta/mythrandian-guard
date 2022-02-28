@@ -16,8 +16,9 @@ class AvatarView(EventReceiver):
         self._avatar = refmod
         self._scr_size = kengi.core.get_screen().get_size()
 
-        self._x_BASEPOS = self._scr_size[0] // 2
-        self._y_BASEPOS = 100
+        approx_height = 80
+        self._x_BASEPOS = self._scr_size[0]
+        self._y_BASEPOS = (self._scr_size[1] - approx_height)//2
 
         self._labels = self._lblsizes = None
         self.refresh_disp()
@@ -31,9 +32,13 @@ class AvatarView(EventReceiver):
         self._lblsizes = list()
         alltexts = [
             '{}:'.format(self._avatar.name),
-            'level={} (xp: {} / {})'.format(self._avatar.level, self._avatar.curr_xp, self._avatar.xp_next_level),
-            'gp={}'.format(self._avatar.gold),
+            'LEVEL {}'.format(self._avatar.level),
+            'xp: {} / {}'.format(self._avatar.curr_xp, self._avatar.xp_next_level),
+            # TODO
+            #'Ini={} | En={}'.format(self._avatar.ini, self._avatar.en),
+            #'Hp: {}/{}'.format(self._avatar.curr_hp, self._avatar.max_hp)
         ]
+
         alltexts.extend(self._avatar.get_team_desc().split('\n'))
         for txt in alltexts:
             tmp = ft.render(txt, True, txtcolor)
@@ -44,13 +49,20 @@ class AvatarView(EventReceiver):
 
     def proc_event(self, ev, source):
         if ev.type == EngineEvTypes.PAINT:
-            mx_y = float('-inf')
+
+            smallest_x = float('inf')
+            tempx = dict()
             for k, lbl in enumerate(self._labels):
                 t = self._lblsizes[k]
-                ev.screen.blit(lbl, (self._x_BASEPOS - t[0], self._y_BASEPOS+24*k))
-                if self._y_BASEPOS+24*k > mx_y:
-                    mx_y = self._y_BASEPOS+24*k
-            pygame.draw.rect(ev.screen, 'steelblue', ((self._x_BASEPOS-136, self._y_BASEPOS), (150, mx_y+16)), 2)
+                tempx[k] = self._x_BASEPOS - 8 - t[0]
+                if smallest_x > tempx[k]:
+                    smallest_x = tempx[k]
+
+            trect = ((smallest_x, self._y_BASEPOS), (self._scr_size[0] - smallest_x - 8, 192))
+            pygame.draw.rect(ev.screen, 'steelblue', trect, 2)
+
+            for k, lbl in enumerate(self._labels):
+                ev.screen.blit(lbl, (tempx[k], self._y_BASEPOS + 24 * k))
 
         elif ev.type == MyEvTypes.AvatarUpdate:
             self.refresh_disp()
