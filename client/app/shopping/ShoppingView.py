@@ -205,15 +205,17 @@ class ShoppingView(EventReceiver):
             scr.fill(game_defs.BG_COLOR)
             self.disp2.do_paint(scr)
 
-        elif ev.type == pygame.MOUSEBUTTONDOWN:
+        elif ev.type == pygame.MOUSEBUTTONUP:
             tmp = self.disp2.is_slot_clicked(ev.pos)
+
             if tmp is not None:
                 if self.ref_mod2.can_buy_lackey(tmp):
+                    print('passe ordre achat')
                     self.ref_mod2.buy_lackey(tmp)
-                    print('achat!')
+
                     # TODO effet graphique
 
-        elif ev.type == MyEvTypes.LackeyBought:
+        elif ev.type == MyEvTypes.LackeySpawn:
             self.disp2.refresh_disp_offers()
 
     def signale_achat_ok(self, skin_code):

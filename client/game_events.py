@@ -4,7 +4,7 @@ import katagames_sdk.katagames_engine as kengi
 MyEvTypes = kengi.struct.enum(
     'ChallengeStarts',  # is it useful in this project?
 
-    'LackeyBought',  # contains idx
+    'LackeySpawn',  # contains idx:int -> indication faut changer gfx
 
     'PlayerBuysItem',
     'WannaBuySkin',  # deprec

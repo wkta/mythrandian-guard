@@ -33,18 +33,22 @@ class ShoppingModel(kengi.event.CogObj):
         return self._prices[slot_num]
 
     def can_buy_lackey(self, slot_num):
-        return glvars.the_avatar.gold >= self._prices[slot_num]
+        if glvars.the_avatar.gold < self._prices[slot_num]:
+            return False
+        if glvars.the_avatar.has_full_team():
+            return False
+        return True
 
     def buy_lackey(self, slot):
         cost = self._prices[slot]
         glvars.the_avatar.mod_gold(-cost)
         glvars.the_avatar.add_lackey(self._slots[slot])
-        self.pev(MyEvTypes.LackeyBought, idx=slot)
 
         # remplacement
         nouv_code = random.choice(LackeyCodes.all_codes)
         self._slots[slot] = nouv_code
         self._prices[slot] = 1 + 4 * lackey_c_to_strength[nouv_code]
+        self.pev(MyEvTypes.LackeySpawn, idx=slot)
 
         print(glvars.the_avatar.lackeys_desc)
 

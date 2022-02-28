@@ -76,14 +76,23 @@ class Avatar(kengi.event.CogObj):
         """
         return self._owned.artifacts[code][elt_no]
 
-    def add_lackey(self, lackey_code):
+    def has_full_team(self):
         cpt = 0
-        while self._owned.lackeys[cpt] is not None:
+        for elt in self._owned.lackeys:
+            if elt is not None:
+                cpt += 1
+        return 5 == cpt
+
+    def add_lackey(self, lackey_code):
+        # find free spot
+        cpt = 0
+        while (self._owned.lackeys[cpt] is not None) and cpt < 5:
             cpt += 1
-            if cpt == 5 and self._owned.lackeys[cpt] is None:
-                raise Exception(' lackey list FULL! Cannot expand it')
-        self._owned.lackeys[cpt] = lackey_code
-        self.pev(MyEvTypes.AvatarUpdate)
+        if cpt == 5:
+            raise OverflowError('the list of Lackey is FULL! Invalid add_lackey op.')
+        else:  # save new lackey
+            self._owned.lackeys[cpt] = lackey_code
+            self.pev(MyEvTypes.AvatarUpdate)
 
     def mod_gold(self, val):
         self._owned.gp += val
