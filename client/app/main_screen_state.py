@@ -1,13 +1,16 @@
 import random
 import time
+
 import glvars
 import katagames_sdk.katagames_engine as kengi
 from app.main_screen.AvatarView import AvatarView
+from app.main_screen.MenuGui import MenuGui
 from app.main_screen.MissionSetView import MissionSetView
 from app.main_screen.models import Avatar
 from app.main_screen.models_mission import MissionSetModel
 from game_defs import GameStates
 from game_events import MyEvTypes
+
 
 EngineEvTypes = kengi.event.EngineEvTypes
 EventReceiver = kengi.event.EventReceiver
@@ -46,9 +49,11 @@ class ChallSelectionCtrl(EventReceiver):
 class MainScreenState(kengi.BaseGameState):
     def __init__(self, gs_id, name):
         super().__init__(gs_id, name)
-        self.m = self.v = self.c = None
+        self.m = self.c = None
+        self.vmission = self.vgui = None
         self.vavatar = None
         self._avatar = None
+        self._all_recv = None
 
     def enter(self):
         if self._avatar:
@@ -59,31 +64,37 @@ class MainScreenState(kengi.BaseGameState):
 
             glvars.the_avatar = self._avatar  # shared with other game states
         self.m = MissionSetModel()
-        self.v = MissionSetView(self.m)
+        self.vmission = MissionSetView(self.m)
+        self.vgui = MenuGui(self._avatar)
         self.vavatar = AvatarView(self._avatar)
 
         self.c = ChallSelectionCtrl(self.m)
+
+        self._all_recv = [
+            self.vmission, self.vgui, self.vavatar, self.c
+        ]
+
         print(' MainMenuState ENTER')
-        self.v.turn_on()
-        self.vavatar.turn_on()
-        self.c.turn_on()
-
-    def release(self):
-        print(' MainMenuState RELEASE')
-        self.c.turn_off()
-        self.v.turn_off()
-        self.vavatar.turn_off()
-        self.v = self.c = None
-
-    def pause(self):
-        print(' MainMenuState PAUSE')
-        self.c.turn_off()
-        self.vavatar.turn_off()
-        self.v.turn_off()
+        for r in self._all_recv:
+            r.turn_on()
 
     def resume(self):
-        print(' MainMenuState RESUME')
-        self.v.turn_on()
         self.vavatar.refresh_disp()
-        self.vavatar.turn_on()
-        self.c.turn_on()
+        self.vgui.update_labels()
+        for r in self._all_recv:
+            r.turn_on()
+        print(' MainMenuState RESUME')
+
+    def release(self):
+        tmp = list(self._all_recv)
+        tmp.reverse()
+        for r in tmp:
+            r.turn_off()
+        print(' MainMenuState RELEASE')
+
+    def pause(self):
+        tmp = list(self._all_recv)
+        tmp.reverse()
+        for r in tmp:
+            r.turn_off()
+        print(' MainMenuState PAUSE')
