@@ -23,37 +23,50 @@ from fightsim_view import draw_fighters
 class GenFighter:
     free_id = -1
 
-    def __init__(self, level, power, en, ini, shadow_f_attrib=False):
+    # /!\ in formulas: assuming max level is 59
+    # z 5.929723110029351
+
+    def __init__(self, level, ini, en, shadow_f_attrib=False):
         """
         ability depends on character class, it's just like "a spell" casted 1 time
         """
         self.__class__.free_id += 1
         self.ident = self.free_id
 
-        self.p, self.e = power, en
-        self.level = level
-        self.dmg = (level // 2) + 3 * power
-        self.hp = self.maxhp = 5 * en + level + 10
+        self.slot = None
 
-        self.ini = ini
+        # assumptions
+        max_dmg = 50
+        z = 1.0809965933
+        maxlevel = 59
+
+        # display only
+        self.en = en
+
+        # sert au placement auto.
         self.ranged = shadow_f_attrib
+        self.ini = ini
+        self.level = level
 
-    def detailled_desc(self):
-        tmp = 'x' if self.ranged else ' '
-        return 'fighter id#{} . level {} .R{} | dmg,hp={},{} \n pow,en,ini={}, {}, {}'.format(
-            self.ident, self.level, tmp, self.dmg, self.maxhp, self.p, self.e, self.ini
-        )
+        # stats de combat impactantes
+        self.dmg = 1 + int(max_dmg - z**(maxlevel-level) / 2)  # flipped exponential func
+        print('level{}  -> dmg= {}'.format(level, self.dmg))
+        self.hp = self.maxhp = 44 + int(level + en**3/4)
+
+    @property
+    def is_dead(self):
+        return self.hp <= 0
 
     def __str__(self):
-        return "F{} .L{} \n{} /{}\ndmg:{} ini:{}".format(
-            self.ident, self.level, self.hp, self.maxhp, self.dmg, self.ini
+        tmp = '+' if self.ranged else '-'
+        return 'F#{} r{} Lv{}\n ini{} dmg{}\n Hp={}/{}'.format(
+            self.ident, tmp, self.level, self.ini, self.dmg, self.hp, self.maxhp,
         )
 
     @classmethod
     def gen_random(cls, b_v_ranged):
         return cls(
             random.randint(1, 59),
-            random.randint(1, 10),
             random.randint(1, 10),
             random.randint(1, 9),
             b_v_ranged
@@ -79,38 +92,18 @@ class Battle:
 
     - a fighter attacks the closest enemy, unless he's using a special attack
     """
-    def find_closest_enemy(self, from_slot_n):
-        """
-        :param from_slot_n:
-
-        :return: pair slot_number, fighter to be hit
-        """
-        # the larger the abs(number), the closest the enemy is
-        candidate = None
-        if self._fetch(from_slot_n).team == 0:
-            live_en = self.det_idx_live_fighters(True)
-            for i in range(-1, -8, -1):
-                if i in live_en:
-                    candidate = i
-        else:
-            live_en = self.det_live_fighters(False)
-            for i in range(1, 8):
-                if i in live_en:
-                    candidate = i
-        return candidate, self.assoc_slot_idfighter[candidate]
-
-    def _fetch(self, key):
-        return self.assoc_slot_idfighter[key]
-
-    # TODO order based on the Initiative stat.
 
     def __init__(self, teama, teamb):
-        # position fighters according to their ini stat + level if its equal
         self.assoc_slot_idfighter = dict()
-        print('slot assignment ... ')
+
+        # position fighters according to their ini stat + level if its equal
         self.inject_proc_sorting(teama, False)
         self.inject_proc_sorting(teamb, True)
-        print("done!\n")
+
+        self.lastactive_fighter = {
+            0: None,
+            1: None
+        }
 
     def _tri(self, target_slots, equipe, sorting_ranged_b):
         """
@@ -130,7 +123,9 @@ class Battle:
 
         while cpt < len(tripl_list):
             d = target_slots[cpt]
-            self.assoc_slot_idfighter[d] = equipe.get_by_id(tripl_list[cpt][2])
+            f_obj = equipe.get_by_id(tripl_list[cpt][2])
+            self.assoc_slot_idfighter[d] = f_obj
+            f_obj.slot = d
             cpt += 1
 
     def inject_proc_sorting(self, equipe, right_team):
@@ -164,32 +159,88 @@ class Battle:
         live_b = self.det_idx_live_fighters(False)
         return len(live_a) == 0 or len(live_b) == 0
 
-    def perform_fight(self, turn_num):
-        # TODO implem real combat order based on initiative stat.
-        # TODO hits given should (more or less) alternate between 2 teams every round
+    # -------------------------------------------------------
+    #  implem logique de combat
+    # -------------------------------------------------------
+    def _get_top_priority_f(self, teamplayin) -> GenFighter:
+        """
+        :param teamplayin:
+        :return: fighter obj, the guy who has the highest priority for attack
+        """
+        alpha = -1 if teamplayin else 1
+        for i in range(1 * alpha, 8 * alpha, 1 * alpha):
+            if not self.assoc_slot_idfighter[i].is_dead:
+                return self.assoc_slot_idfighter[i]
 
-        live_a = self.det_live_fighters(True)
-        live_b = self.det_live_fighters(False)
-
-        # rq : here the ally hits only one guy but the order is random!
-        parite = turn_num % 2 == 0
-        attackers = live_a if parite else live_b
-
-        for from_slot, atker_obj in attackers.items():
-            s, enemy = self.find_closest_enemy(from_slot)
-            enemy.hp -= atker_obj.dmg
-            print('F#{}  hits  F#{} '.format(atker_obj.ident, enemy.ident), end='')
-            if enemy.hp <= 0:
-                print('...And F#{} dies!'.format(enemy.ident))
-                if self.is_over():
-                    break
-            else:
-                print()
-
+    def _get_fighter_after(self, last_f_idx, teamplayin) -> GenFighter:
+        """
+        :param last_f_idx:
+        :param teamplayin:
+        :return: fighter obj, the guy who should attack now. Need to ignore dead fighters
+        """
         if self.is_over():
-            print('battle has ended at turn {} !!!'.format(turn_num))
+            raise NotImplemented
+
+        delta = -1 if teamplayin else +1
+        xf = last_f_idx
+
+        def go_next():
+            nonlocal xf, delta
+            xf += delta
+            if xf < -8:
+                xf = -1
+            elif xf > 8:
+                xf = 1
+
+        go_next()
+        while (xf not in self.assoc_slot_idfighter) or self.assoc_slot_idfighter[xf].is_dead:
+            go_next()
+        return self.assoc_slot_idfighter[xf]
+
+    def _get_close_enemy(self, teamplayin) -> GenFighter:
+        """
+        :param teamplayin:
+        :return: fighter who should tank
+        """
+        # the larger the abs(number), the closest the enemy is
+        candidate = None
+        if teamplayin:
+            live_en = self.det_live_fighters(False)
+            for i in range(1, 8):
+                if i in live_en:
+                    candidate = i
         else:
-            print('turn {} ends.'.format(turn_num))
+            live_en = self.det_idx_live_fighters(True)
+            for i in range(-1, -8, -1):
+                if i in live_en:
+                    candidate = i
+        return self.assoc_slot_idfighter[candidate]
+
+    def increm_fight(self, turn_num):
+        """
+        hits given alternate between 2 teams every round
+        :param turn_num:
+        :return:
+        """
+        team_playing = turn_num % 2  # => value 0 or 1
+
+        # select who attacks and who defends
+        comes_after_f = self.lastactive_fighter[team_playing]
+        if comes_after_f is None:
+            attacker = self._get_top_priority_f(team_playing)
+        else:
+            attacker = self._get_fighter_after(comes_after_f, team_playing)
+        defender = self._get_close_enemy(team_playing)
+
+        defender.hp -= attacker.dmg
+        # save info who played last
+        self.lastactive_fighter[team_playing] = attacker.slot
+
+        # - debug
+        print('F#{}  hits  F#{} '.format(attacker.ident, defender.ident), end='')
+        if defender.hp <= 0:
+            print('...And F#{} dies!'.format(defender.ident))
+        print('turn {} ends'.format(turn_num))
 
 
 class Team:
@@ -219,24 +270,23 @@ class Team:
 
 
 def run_simu():
-    # model debug
-    print('-')
-    aa = GenFighter(59, 10, 1, 1)
-    print(aa)
-    print(aa.detailled_desc())
-    print('-')
-    bb = GenFighter(59, 1, 10, 1)
-    print(bb)
-    print(bb.detailled_desc())
+    # model debug test valeurs extremes
+    for lvl in (1, 59):
+        for en in (1, 10):
+            tf = GenFighter(lvl, 1, en)
+            print(tf)
+
     print()
+    print('----------- * * * -')
 
     # init pygame, init real model
     w = pygame.display.set_mode((960, 540))
 
     prec_a = [GenFighter.gen_random(False) for _ in range(3)]
-    prec_a.extend([GenFighter.gen_random(True) for _ in range(2)])
+    prec_a.extend([GenFighter.gen_random(True) for _ in range(2)])  # deux ranged
+
     prec_b = [GenFighter.gen_random(False) for _ in range(2)]
-    prec_b.extend([GenFighter.gen_random(True) for _ in range(3)])
+    prec_b.extend([GenFighter.gen_random(True) for _ in range(3)])  # trois ranged
 
     b = Battle(Team(prec_a, False), Team(prec_b, True))
 
@@ -255,8 +305,11 @@ def run_simu():
         if can_update:
             can_update = False
             if not b.is_over():
-                b.perform_fight(turn)
-                turn += 1
+                b.increm_fight(turn)
+                if b.is_over():
+                    print('battle has ended at turn {} !!!'.format(turn))
+                else:
+                    turn += 1
 
         # refresh screen
         w.fill('darkblue')
