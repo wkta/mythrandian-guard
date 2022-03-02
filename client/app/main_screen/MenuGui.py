@@ -1,6 +1,6 @@
 import glvars
 import katagames_sdk.katagames_engine as kengi
-from app.main_screen.models import Artifact
+from app.main_screen.models import Artifact, Avatar
 from game_defs import GameStates
 from game_events import MyEvTypes
 
@@ -45,7 +45,7 @@ class MenuGui(EventReceiver):
     """
     LABEL_COL = (211, 15, 127)
 
-    def __init__(self, refmod):
+    def __init__(self, refmod: Avatar):
         super().__init__()
         self._avatar = refmod
 
@@ -70,19 +70,29 @@ class MenuGui(EventReceiver):
         self._buttons['collection'].callback = click_collection
 
         tmp_img = pygame.image.load('assets/small-coin.png')
+
+        # TODO fusionner tt ca par kengi.gui.Label
         self._wealth_spr = pygame.sprite.Sprite()
         tmp2 = pygame.transform.scale(tmp_img, (60, 60))
         tmp2.set_colorkey((255, 0, 255))
         self._wealth_spr.image = tmp2
         self._wealth_spr.rect = tmp2.get_rect()
-        self._wealth_spr.rect.center = (self._scr_size[0] - 80, 80)  # move
+        self._wealth_spr.rect.center = (self._scr_size[0] - 300, 70)  # move
 
         # self._tmp_wealth = 2*10**6+28*1000+721  # placeholder
         self._med_font = pygame.font.Font(None, 34)
         self._small_font = pygame.font.Font(None, 25)
+
+        # TODO refactor this in order to use a kengi.gui Label cls
         self._label_wealth = None
         self._pos_wealth_lbl = None
         self.update_labels()
+
+        # - labels for rep points & energy
+        self._label_rep = kengi.gui.Label('rep: ' + str(refmod.rep), 'steelblue')
+        self._label_rep.rect.topleft = (712, 24)
+        self._label_energy = kengi.gui.Label('energy: '+str(refmod.energy), 'gold')
+        self._label_energy.rect.topleft = (815, 24)
 
     def update_labels(self, couleur=None):
         if couleur is None:
@@ -110,6 +120,11 @@ class MenuGui(EventReceiver):
             ev.screen.blit(self._wealth_spr.image, self._wealth_spr.rect.topleft)
 
             ev.screen.blit(self._label_wealth, self._pos_wealth_lbl)
+            for lab_resource in (self._label_energy, self._label_rep):
+                ev.screen.blit(
+                    lab_resource.image,
+                    lab_resource.rect.topleft
+                )
 
         elif ev.type == pygame.MOUSEBUTTONDOWN:
             for bt_obj in self._buttons.values():

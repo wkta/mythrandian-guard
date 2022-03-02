@@ -2,10 +2,15 @@ import math
 import random
 from math import floor
 
-from game_defs import LackeyCodes, MAX_MANA_PTS, BASE_LIMIT_LACKEYS
-from game_defs import create_artifact_storage, ArtifactCodes, ArtifactNames
-from game_events import MyEvTypes
 import katagames_sdk.katagames_engine as kengi
+from game_defs import ArtifactCodes, ArtifactNames
+from game_events import MyEvTypes
+from shared.BelongingsMod import BelongingsMod
+
+
+# TODO
+# check if this models Xp amount?
+# TODO where to store enchantments/buffs
 
 FULL_LIFE_SYM = -399601
 MAX_FOCUS = 20
@@ -64,7 +69,7 @@ class Avatar(kengi.event.CogObj):
     def __init__(self, name, given_xp, gold):
         super().__init__()
         self._name = name
-        self._owned = BelongingsModel(gold)
+        self._owned = BelongingsMod(gold, 0, 0)
         self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
 
     def add_artifact(self, art_obj):
@@ -95,7 +100,7 @@ class Avatar(kengi.event.CogObj):
             self.pev(MyEvTypes.AvatarUpdate)
 
     def mod_gold(self, val):
-        self._owned.gp += val
+        self._owned.gold += val
         self.pev(MyEvTypes.AvatarUpdate)
 
     def add_xp(self, val):
@@ -131,8 +136,16 @@ class Avatar(kengi.event.CogObj):
         return 0
 
     @property
+    def energy(self):
+        return self._owned.energy
+
+    @property
+    def rep(self):
+        return self._owned.rep
+
+    @property
     def gold(self):  # base money
-        return self._owned.gp
+        return self._owned.gold
 
     @property
     def lackeys_desc(self):
@@ -145,66 +158,8 @@ class Avatar(kengi.event.CogObj):
     def __str__(self):
         res = ''
         res += self._name + ' | '
-        res += str(self._owned.gp) + '$ | stats{ '
+        res += str(self._owned.gold) + '$ | stats{ '
         res += str(self._stats) + '}'
-        return res
-
-
-class BelongingsModel:
-    """
-    Modelise tt ce que l'avatar peut collectionner/posséder.
-    Dans le game design on a imaginé 7 ressources:
-
-    - Xp
-
-    - gold pieces
-    - items héros
-    - artifacts (collectibles)
-    - mana points, potion of mana
-    - lackeys (up to 5)
-    - enchantments (-> progrès temporaire/permanent)
-
-    A part l'Xp tout est modélisé via cette classe
-    """
-
-    def __init__(self, gp, lackey_list=None):
-        self.gp = gp
-        self._eq_items = {
-            'head': None, 'hands': None, 'torso': None, 'legs': None
-        }
-        self.artifacts = create_artifact_storage()
-        self._mp = MAX_MANA_PTS
-        if lackey_list:
-            self.lackeys = lackey_list
-        else:
-            # starts with no lackey...
-            self.lackeys = [None for _ in range(BASE_LIMIT_LACKEYS)]
-
-        self._enchantments = set()
-
-    def _init_random_lackeys(self):
-        self.lackeys[0] = LackeyCodes.SmallOrc
-        if random.random() < 0.6:
-            self.lackeys[1] = LackeyCodes.FriendlySpider
-            if random.random() < 0.6:
-                self.lackeys[2] = LackeyCodes.Slime
-                if random.random() < 0.5:
-                    self.lackeys[3] = LackeyCodes.MountainTroll
-
-    def describe_lackeys(self):
-        res = ''
-        cpt = 0
-        for t in self.lackeys:
-            if t:
-                cpt += 1
-        res += '{} lackeys'.format(cpt)
-        if cpt:
-            res += ':\n'
-        for ii in range(cpt):
-            # lackey code, to str
-            res += ' - {}'.format(LackeyCodes.inv_map[self.lackeys[ii]])
-            if ii != cpt-1:
-                res += '\n'
         return res
 
 
