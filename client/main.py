@@ -15,7 +15,7 @@ MIT License
 import game_defs
 import glvars
 import katagames_sdk.katagames_engine as kengi
-from app.fighting_state import FightingState
+from app.battle_state import BattleState
 from app.main_screen_state import MainScreenState
 from app.shopping_state import ShoppingState
 from app.show_collection_state import ShowCollectionState
@@ -39,7 +39,7 @@ ctrl = StackBasedGameCtrl(
     game_defs.GameStates,
     {
         GameStates.MainScreen: MainScreenState,
-        GameStates.Fighting: FightingState,
+        GameStates.Battle: BattleState,
         GameStates.Shopping: ShoppingState,
         GameStates.ShowCollection: ShowCollectionState
     }

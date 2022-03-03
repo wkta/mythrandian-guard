@@ -11,7 +11,7 @@ BG_COLOR = 'antiquewhite3'
 # listing of gamestates
 GameStates = kengi.struct.enum(
     'MainScreen',
-    'Fighting',
+    'Battle',
     'Shopping',
     'ShowCollection'
 )

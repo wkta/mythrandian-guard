@@ -20,7 +20,7 @@ def click_shop():
 
 def click_fight():
     ev_manager = kengi.core.get_manager()
-    e = CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Fighting)
+    e = CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Battle)
     ev_manager.post(e)
 
 
