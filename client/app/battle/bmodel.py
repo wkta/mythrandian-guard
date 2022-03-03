@@ -129,6 +129,8 @@ class Battle:
             0: None,
             1: None
         }
+        print(' -xo xo xo xo -')
+        print(self.assoc_slot_idfighter)
 
     # - for testing purpose only
     @classmethod
@@ -175,6 +177,9 @@ class Battle:
         # - sort non-ranged guys
         dest = [-4, -5, -6, -7] if right_team else [4, 5, 6, 7]
         self._tri(dest, equipe, False)
+
+    def has_fighter_at(self, posidx):
+        return posidx in self.assoc_slot_idfighter.keys()
 
     def __getitem__(self, item):
         return self.assoc_slot_idfighter[item]
