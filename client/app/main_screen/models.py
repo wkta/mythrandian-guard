@@ -1,12 +1,10 @@
 import math
 import random
 from math import floor
-
+import game_defs
 import katagames_sdk.katagames_engine as kengi
-from game_defs import ArtifactCodes, ArtifactNames
 from game_events import MyEvTypes
 from shared.BelongingsMod import BelongingsMod
-
 
 # TODO
 # check if this models Xp amount?
@@ -36,9 +34,10 @@ SecondaryStats = kengi.struct.enum_from_n(
 
 class Artifact:
     def __init__(self, acode, element):
-        if acode not in ArtifactCodes.all_codes:
+        acodes, anames = game_defs.ArtifactCodes, game_defs.ArtifactNames
+        if acode not in acodes.all_codes:
             raise ValueError('non-valid artifact code ({})'.format(acode))
-        if (not isinstance(element, int)) or (element not in ArtifactNames[acode]):
+        if (not isinstance(element, int)) or (element not in anames[acode]):
             raise ValueError('non-valid artifact element ({}, code={})'.format(element, acode))
 
         self._code = acode
@@ -54,14 +53,16 @@ class Artifact:
 
     @classmethod
     def gen_random(cls):
-        c = random.choice(ArtifactCodes.all_codes)
-        omega_elt = list(ArtifactNames[c].keys())
+        acodes, anames = game_defs.ArtifactCodes, game_defs.ArtifactNames
+        c = random.choice(acodes.all_codes)
+        omega_elt = list(anames[c].keys())
         omega_elt.remove(0)
         return cls(c, random.choice(omega_elt))
 
     def __str__(self):
-        res = '[{}]\n'.format(ArtifactNames[self._code][0])
-        res += '{}'.format(ArtifactNames[self._code][self._elt])
+        anames = game_defs.ArtifactNames
+        res = '[{}]\n'.format(anames[self._code][0])
+        res += '{}'.format(anames[self._code][self._elt])
         return res
 
 
@@ -89,14 +90,14 @@ class Avatar(kengi.event.CogObj):
         for elt in self.owned.lackeys:
             if elt is not None:
                 cpt += 1
-        return 5 == cpt
+        return game_defs.BASE_LIMIT_LACKEYS == cpt
 
     def add_lackey(self, lackey_code):
         # find free spot
         cpt = 0
-        while (self.owned.lackeys[cpt] is not None) and cpt < 5:
+        while (self.owned.lackeys[cpt] is not None) and cpt < game_defs.BASE_LIMIT_LACKEYS:
             cpt += 1
-        if cpt == 5:
+        if cpt == game_defs.BASE_LIMIT_LACKEYS:
             raise OverflowError('the list of Lackey is FULL! Invalid add_lackey op.')
         else:  # save new lackey
             self.owned.lackeys[cpt] = lackey_code

@@ -3,7 +3,7 @@ from lackeys import *
 import katagames_sdk.katagames_engine as kengi
 
 # all global constants
-BASE_LIMIT_LACKEYS = 15
+BASE_LIMIT_LACKEYS = 14
 INIT_ENERGY_LVL = 5
 MAX_MANA_PTS = 8
 BG_COLOR = 'antiquewhite3'
