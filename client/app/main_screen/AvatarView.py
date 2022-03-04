@@ -23,7 +23,6 @@ class AvatarView(EventReceiver):
         self._labels = self._lblsizes = None
 
         self._pos_logos = list()
-        self._lackey_labels = list()
 
         self.refresh_disp()
 
@@ -48,31 +47,9 @@ class AvatarView(EventReceiver):
             self._labels.append(tmp)
             self._lblsizes.append(tmp.get_size())
 
-        # -- do the job for lackey logos
-        tmp_li_names = self._avatar.get_team_desc().split('\n')
-        del self._pos_logos[:]  # clear old list
-        base_x_logos = 140
-        base_y_logos = 233
-        offsetx = 70
-        for k, elt in enumerate(tmp_li_names):
-            self._pos_logos.append(
-                (base_x_logos + k*offsetx, base_y_logos)
-            )
-        del self._lackey_labels[:]
-        for txt in tmp_li_names:
-            tmp = ft.render(txt, True, txtcolor)
-            self._lackey_labels.append(tmp)
-
     def proc_event(self, ev, source):
         if ev.type == EngineEvTypes.PAINT:
             scr = ev.screen
-
-            # draw lackeys
-            for k, pos in enumerate(self._pos_logos):
-                pygame.draw.rect(scr, 'orange', (self._pos_logos[k], (50, 50)))
-                lbl = self._lackey_labels[k]
-                scr.blit(lbl, pos)
-
 
             # draw a rect for avatar stats...
             smallest_x = float('inf')

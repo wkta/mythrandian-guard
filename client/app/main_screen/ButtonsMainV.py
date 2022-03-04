@@ -36,7 +36,7 @@ def click_collection():
     ev_manager.post(e)
 
 
-class MenuGui(EventReceiver):
+class ButtonsMainV(EventReceiver):
     """
     stores buttons, etc.
     that are not related to a mission

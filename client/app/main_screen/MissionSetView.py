@@ -1,9 +1,7 @@
-import game_defs
-import glvars
+import app.main_screen.gui_description as frame
 import katagames_sdk.katagames_engine as kengi
-from app.main_screen.models import Artifact
-from game_defs import GameStates
 from game_events import MyEvTypes
+
 
 pygame = kengi.pygame
 EngineEvTypes = kengi.event.EngineEvTypes
@@ -17,7 +15,6 @@ class ReprSingleMission:
     """
     common_bg_image = None
     gray_bg_image = None
-    pos_arches = dict()
 
     def __init__(self, rank, screenwidth):  # expecting int 0-2 for rank
         if not (-1 < rank < 3):
@@ -33,19 +30,7 @@ class ReprSingleMission:
             tmpii = pygame.image.load('assets/gray_arche.png')
             cls.gray_bg_image = pygame.transform.scale(tmpii, (168, 150))
 
-            # det positions
-            borderx = 118
-            tosplit_width = screenwidth - 2 * borderx
-            decalx = tosplit_width / 4
-            yval_arches = 375
-
-            # schema:
-            #   <borderx> -decalx- . -decalx- . -decalx- . -decalx- <borderx>
-            for k in range(3):
-                ne = (borderx + (k + 1) * decalx, yval_arches)
-                cls.pos_arches[k] = ne
-
-        self.centerpos = cls.pos_arches[rank]
+        self.centerpos = frame.pos_missions[rank]
         self.gray = False
 
     def draw(self, screen):
@@ -82,7 +67,7 @@ class MissionSetView(EventReceiver):
         self._squares = dict()
         self._model = ref_mod
         self.img_pos = (200, 180)
-
+        self._bg_image = pygame.image.load('assets/menu_bg.png')
         # img arches
 
         # - create mission buttons
@@ -113,12 +98,9 @@ class MissionSetView(EventReceiver):
         self._repr_missions[1].button.callback = effetm2
         self._repr_missions[2].button.callback = effetm3
 
-    @staticmethod
-    def position_m_square(index):
-        return 200 * index, 50
-
     def _paint_missionset_v(self, screen):
-        screen.fill(game_defs.BG_COLOR)
+        # screen.fill(game_defs.BG_COLOR)
+        screen.blit(self._bg_image, (0, 0))
 
         for k in range(3):
             # dessin arches
@@ -157,6 +139,6 @@ class MissionSetView(EventReceiver):
 
             tmp = pygame.Surface((80, 80))
             tmp.fill((255, 0, 0))
-            adj_pos = list(MissionSetView.position_m_square(ev.idx))
+            adj_pos = list(frame.pos_missions[ev.idx-1])
             adj_pos[1] += 30  # y
             self._squares[ev.idx] = (tmp, adj_pos)

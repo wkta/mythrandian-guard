@@ -4,7 +4,8 @@ import time
 import glvars
 import katagames_sdk.katagames_engine as kengi
 from app.main_screen.AvatarView import AvatarView
-from app.main_screen.MenuGui import MenuGui
+from app.main_screen.ButtonsMainV import ButtonsMainV
+from app.main_screen.LackeySetV import LackeySetV
 from app.main_screen.MissionSetView import MissionSetView
 from app.main_screen.models import Avatar
 from app.main_screen.models_mission import MissionSetModel
@@ -54,6 +55,7 @@ class MainScreenState(kengi.BaseGameState):
         self.vavatar = None
         self._avatar = None
         self._all_recv = None
+        self.vlackeys = None
 
     def enter(self):
         if self._avatar:
@@ -65,13 +67,14 @@ class MainScreenState(kengi.BaseGameState):
             glvars.the_avatar = self._avatar  # shared with other game states
         self.m = MissionSetModel()
         self.vmission = MissionSetView(self.m)
-        self.vgui = MenuGui(self._avatar)
+        self.vgui = ButtonsMainV(self._avatar)
         self.vavatar = AvatarView(self._avatar)
+        self.vlackeys = LackeySetV(self._avatar)
 
         self.c = ChallSelectionCtrl(self.m)
 
         self._all_recv = [
-            self.vmission, self.vgui, self.vavatar, self.c
+            self.vmission, self.vgui, self.vavatar, self.vlackeys, self.c
         ]
 
         print(' MainMenuState ENTER')
@@ -80,6 +83,8 @@ class MainScreenState(kengi.BaseGameState):
 
     def resume(self):
         self.vavatar.refresh_disp()
+        self.vlackeys.refresh_infos()
+        
         self.vgui.update_labels()
         for r in self._all_recv:
             r.turn_on()
