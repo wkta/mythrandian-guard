@@ -69,21 +69,24 @@ class Avatar(kengi.event.CogObj):
     def __init__(self, name, given_xp, gold):
         super().__init__()
         self._name = name
-        self._owned = BelongingsMod(gold, 0, 0)
+        self.owned = BelongingsMod(gold, 0, 0)
         self._stats = StatsKern(FULL_LIFE_SYM, given_xp, {})
 
-    def add_artifact(self, art_obj):
-        self._owned.artifacts[art_obj.code][art_obj.element] = True
+    def add_artifact(self, partifact_obj):
+        self.owned.artifact_parts.collect(partifact_obj.code, partifact_obj.element)
+
+    def artifact_quant(self, code, elt_no):
+        return self.owned.artifact_parts.get_quant(code, elt_no)
 
     def has_artifact(self, code, elt_no):
         """
         :returns: true/false whether the avatar has looted this artifact or not
         """
-        return self._owned.artifacts[code][elt_no]
+        return self.artifact_quant(code, elt_no) > 0
 
     def has_full_team(self):
         cpt = 0
-        for elt in self._owned.lackeys:
+        for elt in self.owned.lackeys:
             if elt is not None:
                 cpt += 1
         return 5 == cpt
@@ -91,16 +94,16 @@ class Avatar(kengi.event.CogObj):
     def add_lackey(self, lackey_code):
         # find free spot
         cpt = 0
-        while (self._owned.lackeys[cpt] is not None) and cpt < 5:
+        while (self.owned.lackeys[cpt] is not None) and cpt < 5:
             cpt += 1
         if cpt == 5:
             raise OverflowError('the list of Lackey is FULL! Invalid add_lackey op.')
         else:  # save new lackey
-            self._owned.lackeys[cpt] = lackey_code
+            self.owned.lackeys[cpt] = lackey_code
             self.pev(MyEvTypes.AvatarUpdate)
 
     def mod_gold(self, val):
-        self._owned.gold += val
+        self.owned.gold += val
         self.pev(MyEvTypes.AvatarUpdate)
 
     def add_xp(self, val):
@@ -109,7 +112,7 @@ class Avatar(kengi.event.CogObj):
 
     def get_team_desc(self):
         # returns str
-        return self._owned.describe_lackeys()
+        return self.owned.describe_lackeys()
 
     @property
     def level(self):
@@ -137,19 +140,19 @@ class Avatar(kengi.event.CogObj):
 
     @property
     def energy(self):
-        return self._owned.energy
+        return self.owned.energy
 
     @property
     def rep(self):
-        return self._owned.rep
+        return self.owned.rep
 
     @property
     def gold(self):  # base money
-        return self._owned.gold
+        return self.owned.gold
 
     @property
     def lackeys_desc(self):
-        return self._owned.describe_lackeys()
+        return self.owned.describe_lackeys()
 
     @property
     def name(self):
@@ -158,7 +161,7 @@ class Avatar(kengi.event.CogObj):
     def __str__(self):
         res = ''
         res += self._name + ' | '
-        res += str(self._owned.gold) + '$ | stats{ '
+        res += str(self.owned.gold) + '$ | stats{ '
         res += str(self._stats) + '}'
         return res
 

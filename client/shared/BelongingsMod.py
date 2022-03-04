@@ -1,7 +1,7 @@
 import random
-
+import game_defs
+from app.magery.ArtifactStorage import ArtifactStorage
 from game_defs import LackeyCodes, MAX_MANA_PTS, BASE_LIMIT_LACKEYS, INIT_ENERGY_LVL
-from game_defs import create_artifact_storage
 
 
 class BelongingsMod:
@@ -32,7 +32,11 @@ class BelongingsMod:
             'head': None, 'hands': None, 'torso': None, 'legs': None
         }
 
-        self.artifacts = create_artifact_storage()
+        self.artifact_parts = ArtifactStorage.instance()
+        self.whole_artifacts = dict()
+
+        for ac in game_defs.ArtifactCodes.all_codes:
+            self.whole_artifacts[ac] = 0  # quantities
 
         if lackey_list:
             self.lackeys = lackey_list

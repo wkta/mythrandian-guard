@@ -1,10 +1,10 @@
+import katagames_sdk.katagames_engine as kengi
 """
 Definition file for artifacts only
 IMPORTANT REMARK:
     this file is not meant to be imported directly, preferably use -> import game_defs
 """
 
-import katagames_sdk.katagames_engine as kengi
 
 ArtifactCodes = kengi.struct.enum(
     'KingsPlate',
@@ -14,13 +14,12 @@ ArtifactCodes = kengi.struct.enum(
 
 ArtifactNames = {
     ArtifactCodes.KingsPlate: {
-        0: 'Plate Armour of the forgotten king',  # 0 -> artifact's name, always
-
-        1: 'Breastplate',
-        2: 'Greaves',
-        3: 'Spaulders',
-        4: 'Sallet',
-        5: 'Visor'
+        0: 'Luriel\'s Outfit',  # 0 -> artifact's name, always
+        # list of reagents
+        1: 'Antique Breastplate',
+        2: 'Antique spaulders',
+        3: 'Antique Sallet',
+        4: 'Silver Scepter',
     },
     ArtifactCodes.Relics: {
         0: 'Relics of Matangi',
@@ -37,30 +36,3 @@ ArtifactNames = {
         2: 'Ash wood stick'
     }
 }
-
-
-def create_artifact_storage():
-    global ArtifactNames
-    """
-    Aims at easing specific info. (about the artifacts collection) storage
-    
-    :return: an objects whose precise format is
-        {
-            ArtifactCodes.KingsPlate: {
-                1: False,  # part 1 -> Breastplate
-                2: False,  # part 2... etc
-                3: False, 
-                4: False,  
-                5: False,
-            },
-            ...
-        }
-    :rtype: dict
-    """
-    res = dict()
-    for code in ArtifactNames.keys():
-        res[code] = dict()
-        for idx in ArtifactNames[code].keys():
-            if idx:
-                res[code][idx] = False
-    return res

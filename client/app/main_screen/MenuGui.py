@@ -32,7 +32,7 @@ def click_loot_arti():
 
 def click_collection():
     ev_manager = kengi.core.get_manager()
-    e = CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.ShowCollection)
+    e = CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Magery)
     ev_manager.post(e)
 
 

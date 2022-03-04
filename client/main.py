@@ -16,9 +16,9 @@ import game_defs
 import glvars
 import katagames_sdk.katagames_engine as kengi
 from app.battle_state import BattleState
+from app.magery_state import MageryState
 from app.main_screen_state import MainScreenState
 from app.shopping_state import ShoppingState
-from app.show_collection_state import ShowCollectionState
 from game_defs import GameStates
 
 print('Mythrandian Guard demo: /!\\ Current kengi version is: ', kengi.vernum)
@@ -41,7 +41,7 @@ ctrl = StackBasedGameCtrl(
         GameStates.MainScreen: MainScreenState,
         GameStates.Battle: BattleState,
         GameStates.Shopping: ShoppingState,
-        GameStates.ShowCollection: ShowCollectionState
+        GameStates.Magery: MageryState
     }
 )
 

@@ -13,7 +13,7 @@ GameStates = kengi.struct.enum(
     'MainScreen',
     'Battle',
     'Shopping',
-    'ShowCollection'
+    'Magery'  # collection of artifacts etc.
 )
 
 EnchantmentCodes = kengi.struct.enum(
