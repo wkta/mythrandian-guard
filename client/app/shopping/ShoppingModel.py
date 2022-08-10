@@ -3,7 +3,11 @@ import random
 import glvars
 from game_defs import *
 from game_events import MyEvTypes
-import katagames_sdk.katagames_engine as kengi
+
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
 
 
 class ShoppingModel(kengi.event.CogObj):

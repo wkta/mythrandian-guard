@@ -1,8 +1,9 @@
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+from katagames_engine.Singleton import Singleton
 from game_defs import ArtifactNames
-
-
-Singleton = kengi.struct.Singleton
 
 
 @Singleton

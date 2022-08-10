@@ -1,6 +1,10 @@
 from artifacts import *
 from lackeys import *
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+
 
 # all global constants
 BASE_LIMIT_LACKEYS = 14

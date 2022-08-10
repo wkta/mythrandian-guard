@@ -4,7 +4,10 @@ IMPORTANT REMARK:
     this file is not meant to be imported directly, preferably use -> import game_defs
 """
 
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
 
 LackeyCodes = kengi.struct.enum(
     'CaveTroll',

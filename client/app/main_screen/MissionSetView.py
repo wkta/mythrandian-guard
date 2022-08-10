@@ -1,5 +1,9 @@
 import app.main_screen.gui_description as frame
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+
 from game_events import MyEvTypes
 
 
@@ -49,7 +53,7 @@ class MissionSetView(EventReceiver):
     def __init__(self, ref_mod):
         super().__init__(self)
 
-        self._scr_size = kengi.core.get_screen().get_size()
+        self._scr_size = kengi.get_surface().get_size()
 
         fixed_size = (72, 66)
         offsety_bt = 25

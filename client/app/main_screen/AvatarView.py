@@ -1,5 +1,9 @@
 
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+
 from game_events import MyEvTypes
 
 EngineEvTypes = kengi.event.EngineEvTypes
@@ -14,7 +18,7 @@ class AvatarView(EventReceiver):
     def __init__(self, refmod):
         super().__init__()
         self._avatar = refmod
-        self._scr_size = kengi.core.get_screen().get_size()
+        self._scr_size = kengi.get_surface().get_size()
 
         approx_height = 80
         self._x_BASEPOS = self._scr_size[0]

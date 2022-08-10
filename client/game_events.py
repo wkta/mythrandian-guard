@@ -1,4 +1,7 @@
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
 
 
 MyEvTypes = kengi.struct.enum(

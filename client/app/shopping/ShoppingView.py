@@ -1,7 +1,11 @@
 import os
 
 import game_defs
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+
 from app.shopping.ShoppingModel import ShoppingModel
 from game_defs import lackey_c_to_name, AvLooks, SUPPORTED_LOOKS, ASSETS_DIR, LackeyCodes, ASSOC_IDPORTRAIT_FILENAME
 from game_events import MyEvTypes

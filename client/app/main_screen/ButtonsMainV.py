@@ -1,5 +1,9 @@
 import glvars
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+
 from app.main_screen.models import Artifact, Avatar
 from game_defs import GameStates
 from game_events import MyEvTypes
@@ -13,13 +17,13 @@ EventReceiver = kengi.event.EventReceiver
 
 # - effect for buttons that can be clicked
 def click_shop():
-    ev_manager = kengi.core.get_manager()
+    ev_manager = kengi.get_manager()
     e = CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Shopping)
     ev_manager.post(e)
 
 
 def click_fight():
-    ev_manager = kengi.core.get_manager()
+    ev_manager = kengi.get_manager()
     e = CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Battle)
     ev_manager.post(e)
 
@@ -31,7 +35,7 @@ def click_loot_arti():
 
 
 def click_collection():
-    ev_manager = kengi.core.get_manager()
+    ev_manager = kengi.get_manager()
     e = CgmEvent(EngineEvTypes.PUSHSTATE, state_ident=GameStates.Magery)
     ev_manager.post(e)
 
@@ -49,7 +53,7 @@ class ButtonsMainV(EventReceiver):
         super().__init__()
         self._avatar = refmod
 
-        self._scr_size = kengi.core.get_screen().get_size()
+        self._scr_size = kengi.get_surface().get_size()
 
         # button size & locations
         fixed_size = (150, 48)

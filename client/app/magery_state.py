@@ -1,6 +1,9 @@
 import game_defs
 import glvars
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
 
 
 pygame = kengi.pygame
@@ -92,8 +95,8 @@ class ShowCollectionCtrl(EventReceiver):
 
 
 class MageryState(kengi.BaseGameState):
-    def __init__(self, gs_id, name):
-        super().__init__(gs_id, name)
+    def __init__(self, gs_id):
+        super().__init__(gs_id)
         self.m = self.v = self.c = None
 
     def enter(self):

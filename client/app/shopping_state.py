@@ -1,7 +1,10 @@
 import glvars
 from app.shopping.ShoppingModel import ShoppingModel
 from app.shopping.ShoppingView import ShoppingView
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
 
 
 pygame = kengi.pygame
@@ -35,8 +38,8 @@ class ShoppingCtrl(EventReceiver):
 
 
 class ShoppingState(kengi.BaseGameState):
-    def __init__(self, gs_id, name):
-        super().__init__(gs_id, name)
+    def __init__(self, gs_id):
+        super().__init__(gs_id)
         self.m1 = self.m2 = self.v = self.c = None
 
     def enter(self):
@@ -50,5 +53,5 @@ class ShoppingState(kengi.BaseGameState):
         self.c.turn_on()
 
     def release(self):
-        kengi.core.get_manager().soft_reset()
+        kengi.get_manager().soft_reset()
         self.m1 = self.m2 = self.v = self.c = None

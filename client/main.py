@@ -14,37 +14,42 @@ MIT License
 """
 import game_defs
 import glvars
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+kengi.bootstrap_e()
+
 from app.battle_state import BattleState
 from app.magery_state import MageryState
 from app.main_screen_state import MainScreenState
 from app.shopping_state import ShoppingState
 from game_defs import GameStates
 
-print('Mythrandian Guard demo: /!\\ Current kengi version is: ', kengi.vernum)
+print('Mythrandian Guard demo: /!\\ Current kengi version is: ', kengi.ver)
 
 CgmEvent = kengi.event.CgmEvent
 StackBasedGameCtrl = kengi.event.StackBasedGameCtrl
 # CgmEvent.inject_custom_names(MyEvTypes)
 
 # - main program
-kengi.core.init()
+kengi.init()
 WIN_CAPTION = 'Mythrandian Guard'
 kengi.pygame.display.set_caption(WIN_CAPTION)
 # bios_like_st = KataFrameState(-1, 'bios-like', game_defs)
 
-ctrl = StackBasedGameCtrl(
-    kengi.core.get_game_ctrl(),
-    glvars,
+kengi.declare_states(
     game_defs.GameStates,
     {
         GameStates.MainScreen: MainScreenState,
         GameStates.Battle: BattleState,
         GameStates.Shopping: ShoppingState,
         GameStates.Magery: MageryState
-    }
+    },    glvars,
 )
+ctrl = kengi.get_game_ctrl()
 
 ctrl.turn_on()
 ctrl.loop()
-kengi.core.cleanup()
+kengi.quit()
+print('clean exit OK')

@@ -2,7 +2,11 @@ import random
 import time
 
 import glvars
-import katagames_sdk.katagames_engine as kengi
+# - use katasdk, only if needed
+# import katagames_sdk.katagames_engine as kengi
+# kengi = katasdk.kengi
+import katagames_engine as kengi
+
 from app.main_screen.AvatarView import AvatarView
 from app.main_screen.ButtonsMainV import ButtonsMainV
 from app.main_screen.LackeySetV import LackeySetV
@@ -48,8 +52,8 @@ class ChallSelectionCtrl(EventReceiver):
 
 
 class MainScreenState(kengi.BaseGameState):
-    def __init__(self, gs_id, name):
-        super().__init__(gs_id, name)
+    def __init__(self, gs_id):
+        super().__init__(gs_id)
         self.m = self.c = None
         self.vmission = self.vgui = None
         self.vavatar = None
