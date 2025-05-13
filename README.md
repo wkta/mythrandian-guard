@@ -4,19 +4,31 @@
 <a href="https://discord.gg/24DfrtvpXk"><img src="discord-logo.png" height="48"></a>
 </center>
 
-A game of Heroes and Lackeys\
-*Un jeu de Héros et de Laquais*
+*Mythrandia Guard: Rise of the Endless Heroes*
 
 ## Type of game / Type de jeu
 
 Idle-game + "Deck building" game
 
 
-## Gameplay overview / Aperçu du gameplay
+## Gameplay overview
 
-You start with a hero, you collect new gear and new Lackeys by picking up missions. A selected mission needs to be hard enough so your rewards are worthy, but not too hard otherwise your hero/team is wounded and you loose some time generally speaking (->no progress made).
+The idea of this project is mixing deck-building and incremental gameplay.
+Both genres have elements that can complement each other in interesting ways:
 
-*Tu démarres avec un héros, tu collectionnes du nouveau matériel et de nouveaux Laquais via la sélection de missions. Une mission sélectionnée doit être suffisament difficile de manière à produire des récompenses de valeur, mais pas trop difficile autrement ton héros/équipe est blessée et tu perds du temps de manière générale (->absence de progression).*
+1. Endless Progression: Incremental games focus on constant growth, unlocking new features, and feeling like you’re always progressing — a core component of many player experiences. Deck-building can tie into this progression by allowing players to unlock more powerful cards, expand their deck, and enhance their strategies over time.
+
+2. Replayability: Incremental games are highly replayable because players often enjoy seeing how far they can push the game’s mechanics, while deck-building games have natural replayability through randomized card draws and strategic decision-making. Combining the two could create a cycle where players are constantly improving their decks and optimizing their strategies as they progress.
+
+3. Synergy Between Systems: In a deck-building game, you might start with a simple set of cards and gradually expand, which aligns well with incremental mechanics (e.g., unlocking upgrades, enhancing abilities, etc.). The card-based mechanics could drive the incremental progression, where you slowly gain access to more powerful abilities, units, or synergies as you advance.
+
+4. Rewarding Strategy and Growth: While deck-building focuses on strategic decision-making and crafting a powerful deck, incremental games often rely on automatic progression. By merging both, you can give players the satisfaction of strategically building their deck while also letting the game "run" in the background, allowing for passive growth. This could create a more engaging experience than either genre on its own.
+
+You start with a hero, you collect new cards and lackeys by picking up missions.
+A selected mission needs to be hard enough so your rewards are worthy, but not too hard otherwise your hero/team is wounded and you loose some time generally speaking (->no progress made).
+
+Tu démarres avec un héros, tu collectionnes de nouvelles cartes et laquais via la sélection de missions.
+Une mission sélectionnée doit être suffisament difficile de manière à produire des récompenses de valeur, mais pas trop difficile autrement ton héros/équipe est blessée et tu perds du temps de manière générale (->absence de progression).
 
 ## Chosen tech stack (overview)
 
